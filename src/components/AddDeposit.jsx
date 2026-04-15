@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { FaRupeeSign, FaCalendarAlt } from "react-icons/fa";
 
 const AddDeposit = ({ rid, onSuccess }) => {
 
@@ -13,7 +14,6 @@ const AddDeposit = ({ rid, onSuccess }) => {
 
   const [loading, setLoading] = useState(false);
 
-  // ✅ HANDLE CHANGE
   const handleChange = (e) => {
     let value = e.target.value;
 
@@ -27,24 +27,21 @@ const AddDeposit = ({ rid, onSuccess }) => {
     });
   };
 
-  // ✅ SUBMIT
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // ❗ TOKEN CHECK
     if (!token) {
       toast.error("Session expired ❌");
       return;
     }
 
-    // ✅ VALIDATION
     if (!data.rdDate || !data.rdAmount) {
-      toast.warning("Please fill all fields ⚠️");
+      toast.warning("Fill all fields ⚠️");
       return;
     }
 
     if (data.rdAmount <= 0) {
-      toast.error("Amount must be greater than 0 ❌");
+      toast.error("Amount must be > 0 ❌");
       return;
     }
 
@@ -67,67 +64,80 @@ const AddDeposit = ({ rid, onSuccess }) => {
         body: JSON.stringify(formattedData)
       });
 
-      if (!res.ok) {
-        if (res.status === 403) {
-          throw new Error("Forbidden");
-        }
+      if (!res.ok) throw new Error();
 
-        const err = await res.text();
-        throw new Error(err || "Failed");
-      }
-
-      await res.json();
-
-      // ❌ REMOVE SUCCESS TOAST FROM HERE
-      // toast.success("Deposit Added Successfully 💰");
-
-      // ✅ RESET FORM
       setData({
         rid: rid,
         rdDate: "",
         rdAmount: ""
       });
 
-      // ✅ CALL PARENT (waha toast show hoga)
       if (onSuccess) onSuccess();
 
-    } catch (err) {
-      if (err.message === "Forbidden") {
-        toast.error("Access Denied (403) ❌");
-      } else {
-        toast.error(err.message || "Server Error ❌");
-      }
+    } catch {
+      toast.error("Error ❌");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
+    <form onSubmit={handleSubmit} className="space-y-4">
 
-      <input
-        type="date"
-        name="rdDate"
-        value={data.rdDate}
-        onChange={handleChange}
-        className="border p-2 w-full rounded"
-        required
-      />
+      {/* TITLE */}
+      <h2 className="text-lg font-bold text-gray-800 dark:text-white text-center">
+        Add Deposit 💰
+      </h2>
 
-      <input
-        type="number"
-        name="rdAmount"
-        value={data.rdAmount}
-        placeholder="Enter Amount"
-        onChange={handleChange}
-        className="border p-2 w-full rounded"
-        required
-      />
+      {/* DATE */}
+      <div className="relative">
+        <FaCalendarAlt className="absolute left-3 top-3 text-gray-500" />
+        <input
+          type="date"
+          name="rdDate"
+          value={data.rdDate}
+          onChange={handleChange}
+          className="input pl-10"
+          required
+        />
+      </div>
 
+      {/* AMOUNT */}
+      <div className="relative">
+        <FaRupeeSign className="absolute left-3 top-3 text-gray-500" />
+        <input
+          type="number"
+          name="rdAmount"
+          value={data.rdAmount}
+          placeholder="Enter Amount"
+          onChange={handleChange}
+          className="input pl-10"
+          required
+        />
+      </div>
+
+      {/* QUICK BUTTONS */}
+      <div className="flex gap-2 justify-center">
+        {[500, 1000, 2000].map((amt) => (
+          <button
+            type="button"
+            key={amt}
+            onClick={() => setData({ ...data, rdAmount: amt })}
+            className="bg-gray-200 dark:bg-gray-700 
+            text-gray-800 dark:text-white 
+            px-3 py-1 rounded hover:scale-105 transition"
+          >
+            ₹ {amt}
+          </button>
+        ))}
+      </div>
+
+      {/* SUBMIT */}
       <button
         type="submit"
         disabled={loading}
-        className="bg-green-500 text-white p-2 w-full rounded"
+        className="w-full bg-gradient-to-r from-green-500 to-emerald-600 
+        text-white py-2 rounded-xl shadow-lg hover:scale-105 transition"
       >
         {loading ? "Adding..." : "Add Deposit"}
       </button>

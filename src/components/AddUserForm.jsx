@@ -51,14 +51,13 @@ const AddUserForm = ({ onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // ❗ TOKEN CHECK
     if (!token) {
       toast.error("Session expired ❌");
       return;
     }
 
     if (!validate()) {
-      toast.warning("Please fix form errors ⚠️");
+      toast.warning("Fix errors ⚠️");
       return;
     }
 
@@ -74,14 +73,9 @@ const AddUserForm = ({ onSuccess }) => {
         body: JSON.stringify(user)
       });
 
-      if (!res.ok) {
-        if (res.status === 403) {
-          throw new Error("Forbidden");
-        }
-        throw new Error();
-      }
+      if (!res.ok) throw new Error();
 
-      toast.success("User Added Successfully 🎉");
+      toast.success("User Added 🎉");
 
       setUser({
         name: "",
@@ -99,85 +93,57 @@ const AddUserForm = ({ onSuccess }) => {
       setErrors({});
       onSuccess();
 
-    } catch (err) {
-      if (err.message === "Forbidden") {
-        toast.error("Access Denied (403) ❌");
-      } else {
-        toast.error("Server Error ❌");
-      }
+    } catch {
+      toast.error("Error ❌");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 p-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
 
-      <div>
-        <input name="name" placeholder="Name" value={user.name}
-          onChange={handleChange}
-          className={`border p-2 w-full ${errors.name ? "border-red-500" : ""}`} />
-        <p className="text-red-500 text-sm">{errors.name}</p>
+      <h2 className="text-xl font-bold text-gray-800 dark:text-white">
+        Add User 👤
+      </h2>
+
+      <div className="grid grid-cols-2 gap-4">
+
+        {/* INPUT FIELD COMPONENT */}
+        {[
+          { name: "name", placeholder: "Name" },
+          { name: "gender", placeholder: "Gender" },
+          { name: "dob", type: "date" },
+          { name: "occupation", placeholder: "Occupation" },
+          { name: "accountNumber", placeholder: "Account No" },
+          { name: "aadharNo", placeholder: "Aadhar No" },
+          { name: "panNo", placeholder: "PAN No" },
+          { name: "address", placeholder: "Address" },
+          { name: "rdAmount", type: "number", placeholder: "RD Amount" },
+          { name: "rdDate", type: "date" },
+        ].map((field, i) => (
+          <div key={i}>
+            <input
+              type={field.type || "text"}
+              name={field.name}
+              placeholder={field.placeholder}
+              value={user[field.name]}
+              onChange={handleChange}
+              className={`input ${
+                errors[field.name] ? "border-red-500 ring-1 ring-red-500" : ""
+              }`}
+            />
+            <p className="text-red-500 text-sm">{errors[field.name]}</p>
+          </div>
+        ))}
+
       </div>
 
-      <div>
-        <input name="gender" placeholder="Gender" value={user.gender}
-          onChange={handleChange}
-          className={`border p-2 w-full ${errors.gender ? "border-red-500" : ""}`} />
-        <p className="text-red-500 text-sm">{errors.gender}</p>
-      </div>
-
-      <input type="date" name="dob" value={user.dob}
-        onChange={handleChange} className="border p-2 w-full" />
-
-      <input name="occupation" placeholder="Occupation" value={user.occupation}
-        onChange={handleChange} className="border p-2 w-full" />
-
-      <div>
-        <input name="accountNumber" placeholder="Account No"
-          value={user.accountNumber} onChange={handleChange}
-          className={`border p-2 w-full ${errors.accountNumber ? "border-red-500" : ""}`} />
-        <p className="text-red-500 text-sm">{errors.accountNumber}</p>
-      </div>
-
-      <div>
-        <input name="aadharNo" placeholder="Aadhar No"
-          value={user.aadharNo} onChange={handleChange}
-          className={`border p-2 w-full ${errors.aadharNo ? "border-red-500" : ""}`} />
-        <p className="text-red-500 text-sm">{errors.aadharNo}</p>
-      </div>
-
-      <div>
-        <input name="panNo" placeholder="PAN No"
-          value={user.panNo} onChange={handleChange}
-          className={`border p-2 w-full ${errors.panNo ? "border-red-500" : ""}`} />
-        <p className="text-red-500 text-sm">{errors.panNo}</p>
-      </div>
-
-      <div>
-        <input name="address" placeholder="Address"
-          value={user.address} onChange={handleChange}
-          className={`border p-2 w-full ${errors.address ? "border-red-500" : ""}`} />
-        <p className="text-red-500 text-sm">{errors.address}</p>
-      </div>
-
-      <div>
-        <input type="number" name="rdAmount" placeholder="RD Amount"
-          value={user.rdAmount} onChange={handleChange}
-          className={`border p-2 w-full ${errors.rdAmount ? "border-red-500" : ""}`} />
-        <p className="text-red-500 text-sm">{errors.rdAmount}</p>
-      </div>
-
-      <div>
-        <input type="date" name="rdDate"
-          value={user.rdDate} onChange={handleChange}
-          className={`border p-2 w-full ${errors.rdDate ? "border-red-500" : ""}`} />
-        <p className="text-red-500 text-sm">{errors.rdDate}</p>
-      </div>
-
+      {/* BUTTON */}
       <button
         disabled={loading}
-        className="col-span-2 bg-blue-500 text-white p-3 rounded"
+        className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 
+        text-white py-2 rounded-xl shadow-lg hover:scale-105 transition"
       >
         {loading ? "Saving..." : "Save User"}
       </button>

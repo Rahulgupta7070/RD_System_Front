@@ -24,7 +24,7 @@ const UserTable = () => {
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState({});
 
-  // ✅ FETCH USERS
+  // ================= FETCH USERS =================
   const fetchUsers = () => {
 
     if (!token) {
@@ -69,79 +69,93 @@ const UserTable = () => {
     fetchUsers();
   }, [page, search, filters]);
 
-  // ✅ DELETE USER WITH TOAST CONFIRM
-  const deleteUser = (id) => {
+  // ================= DELETE =================
+const deleteUser = (id) => {
 
-    toast(
-      ({ closeToast }) => (
-        <div>
-          <p className="font-semibold">Are you sure to delete?</p>
+  toast(
+    ({ closeToast }) => (
+      <div className="bg-white dark:bg-gray-800 text-gray-800 dark:text-white p-3 rounded">
 
-          <div className="flex gap-2 mt-3">
+        <p className="font-semibold mb-3">
+          Delete this user?
+        </p>
 
-            <button
-              onClick={() => {
-                closeToast();
+        <div className="flex justify-center gap-3">
 
-                fetch(`http://localhost:8080/rdusers/delete/${id}`, {
-                  method: "DELETE",
-                  headers: {
-                    Authorization: `Bearer ${token}`
-                  }
+          {/* YES */}
+          <button
+            onClick={() => {
+              closeToast();
+
+              fetch(`http://localhost:8080/rdusers/delete/${id}`, {
+                method: "DELETE",
+                headers: {
+                  Authorization: `Bearer ${token}`
+                }
+              })
+                .then(res => {
+                  if (!res.ok) throw new Error();
+                  toast.success("User Deleted ✅");
+                  fetchUsers();
                 })
-                  .then(res => {
-                    if (!res.ok) throw new Error();
+                .catch(() => toast.error("Delete Failed ❌"));
+            }}
+            className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600"
+          >
+            Yes
+          </button>
 
-                    toast.success("User Deleted Successfully ✅");
-                    fetchUsers();
-                  })
-                  .catch(() => toast.error("Delete Failed ❌"));
-              }}
-              className="bg-red-500 text-white px-3 py-1 rounded"
-            >
-              Yes
-            </button>
+          {/* NO */}
+          <button
+            onClick={closeToast}
+            className="bg-gray-300 dark:bg-gray-600 text-black dark:text-white px-4 py-1 rounded"
+          >
+            No
+          </button>
 
-            <button
-              onClick={closeToast}
-              className="bg-gray-400 px-3 py-1 rounded"
-            >
-              No
-            </button>
-
-          </div>
         </div>
-      ),
-      { autoClose: false }
-    );
-  };
 
+      </div>
+    ),
+    {
+      autoClose: false,
+      closeOnClick: false,
+      style: {
+        background: "transparent",
+        boxShadow: "none"
+      }
+    }
+  );
+};
   return (
-    <div className="p-6">
+    <div className="p-6 relative">
 
       {/* HEADER */}
-      <div className="flex justify-between items-center mb-5">
-        <h1 className="text-3xl font-bold">Users</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
+          Users 👥
+        </h1>
 
         <button
           onClick={() => setShowForm(true)}
-          className="bg-green-500 text-white px-4 py-2 rounded"
+          className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-5 py-2 rounded-xl shadow hover:scale-105 transition"
         >
           + Add User
         </button>
       </div>
 
       {/* SEARCH + FILTER */}
-      <div className="flex justify-between mb-5">
+      <div className="flex justify-between items-center mb-6">
+
         <input
           type="text"
-          placeholder="Search"
+          placeholder="🔍 Search user..."
           value={search}
           onChange={(e) => {
             setPage(0);
             setSearch(e.target.value);
           }}
-          className="border p-2 rounded w-72"
+          className="bg-white dark:bg-gray-800 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-700 px-4 py-2 rounded-xl w-80 focus:ring-2 focus:ring-blue-500 outline-none shadow"
         />
 
         <UserFilter onApply={(f) => {
@@ -150,30 +164,141 @@ const UserTable = () => {
         }} />
       </div>
 
-      {/* ADD USER MODAL */}
-      {showForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-xl w-[650px] relative">
+      {/* TABLE */}
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-lg overflow-hidden">
 
-            <button onClick={() => setShowForm(false)} className="absolute top-2 right-2">
+        <table className="w-full">
+
+          <thead className="bg-gray-900 dark:bg-gray-700 text-white">
+            <tr>
+              <th className="p-3">RID</th>
+              <th>Name</th>
+              <th>Account</th>
+              <th>Aadhar</th>
+              <th>PAN</th>
+              <th>Amount</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {users.map((u) => (
+              <tr
+                key={u.rid}
+                className="text-center border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+              >
+                <td className="p-3 text-gray-800 dark:text-white">{u.rid}</td>
+                <td className="text-gray-800 dark:text-white">{u.name}</td>
+                <td className="text-gray-800 dark:text-white">{u.accountNumber}</td>
+                <td className="text-gray-800 dark:text-white">{u.aadharNo}</td>
+                <td className="text-gray-800 dark:text-white">{u.panNo}</td>
+
+                <td className="font-bold text-green-600 dark:text-green-400">
+                  ₹ {u.rdAmount}
+                </td>
+
+                <td className="text-gray-800 dark:text-white">{u.rdDate}</td>
+
+                <td className="flex justify-center gap-2 p-2">
+
+                  {/* DELETE */}
+                  <button
+                    onClick={() => deleteUser(u.rid)}
+                    className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg shadow hover:scale-110 transition"
+                  >
+                    <MdDelete />
+                  </button>
+
+                  {/* EDIT */}
+                  <button
+                    onClick={() => {
+                      setSelectedUser(u);
+                      setShowEditForm(true);
+                    }}
+                    className="bg-yellow-400 hover:bg-yellow-500 p-2 rounded-lg shadow hover:scale-110 transition"
+                  >
+                    <FaRegEdit />
+                  </button>
+
+                  {/* PASSBOOK */}
+                  <button
+                    onClick={() => {
+                      setSelectedUser(u);
+                      setShowPassbook(true);
+                    }}
+                    className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-lg shadow hover:scale-110 transition"
+                  >
+                    <BsBank />
+                  </button>
+
+                </td>
+
+              </tr>
+            ))}
+          </tbody>
+
+        </table>
+      </div>
+
+      {/* PAGINATION */}
+      <div className="flex justify-center items-center gap-4 mt-6">
+        <button
+          onClick={() => setPage(page - 1)}
+          disabled={page === 0}
+          className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white px-3 py-1 rounded disabled:opacity-50"
+        >
+          Prev
+        </button>
+
+        <span className="text-gray-800 dark:text-white">
+          {page + 1} / {totalPages}
+        </span>
+
+        <button
+          onClick={() => setPage(page + 1)}
+          disabled={page + 1 === totalPages}
+          className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white px-3 py-1 rounded disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
+
+      {/* ================= ADD USER MODAL ================= */}
+      {showForm && (
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[9999]">
+
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl w-[600px] shadow-2xl relative">
+
+            <button
+              onClick={() => setShowForm(false)}
+              className="absolute top-3 right-3 text-red-500 text-xl"
+            >
               ✖
             </button>
 
-            <AddUserForm onSuccess={() => {
-              setShowForm(false);
-              fetchUsers();
-            }} />
+            <AddUserForm
+              onSuccess={() => {
+                setShowForm(false);
+                fetchUsers();
+              }}
+            />
 
           </div>
+
         </div>
       )}
 
-      {/* EDIT USER MODAL */}
+      {/* ================= EDIT USER MODAL ================= */}
       {showEditForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-xl w-[650px] relative">
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[9999]">
 
-            <button onClick={() => setShowEditForm(false)} className="absolute top-2 right-2">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl w-[600px] shadow-2xl relative">
+
+            <button
+              onClick={() => setShowEditForm(false)}
+              className="absolute top-3 right-3 text-red-500 text-xl"
+            >
               ✖
             </button>
 
@@ -186,76 +311,17 @@ const UserTable = () => {
             />
 
           </div>
+
         </div>
       )}
 
-      {/* PASSBOOK */}
+      {/* ================= PASSBOOK ================= */}
       {showPassbook && (
         <UserPassbook
           rid={selectedUser?.rid}
           onClose={() => setShowPassbook(false)}
         />
       )}
-
-      {/* TABLE */}
-      <table className="w-full border shadow">
-        <thead className="bg-gray-900 text-white">
-          <tr>
-            <th className="p-3">RID</th>
-            <th>Name</th>
-            <th>Account</th>
-            <th>Aadhar</th>
-            <th>PAN</th>
-            <th>Amount</th>
-            <th>Date</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {users.map((u) => (
-            <tr key={u.rid} className="text-center border-b">
-
-              <td>{u.rid}</td>
-              <td>{u.name}</td>
-              <td>{u.accountNumber}</td>
-              <td>{u.aadharNo}</td>
-              <td>{u.panNo}</td>
-              <td>₹ {u.rdAmount}</td>
-              <td>{u.rdDate}</td>
-
-              <td className="flex justify-center gap-2 p-2">
-
-                <button onClick={() => deleteUser(u.rid)} className="bg-red-500 text-white px-2 py-1 rounded">
-                  <MdDelete />
-                </button>
-
-                <button
-                  onClick={() => {
-                    setSelectedUser(u);
-                    setShowEditForm(true);
-                  }}
-                  className="bg-yellow-400 px-2 py-1 rounded"
-                >
-                  <FaRegEdit />
-                </button>
-
-                <button
-                  onClick={() => {
-                    setSelectedUser(u);
-                    setShowPassbook(true);
-                  }}
-                  className="bg-blue-500 text-white px-2 py-1 rounded"
-                >
-                  <BsBank />
-                </button>
-
-              </td>
-
-            </tr>
-          ))}
-        </tbody>
-      </table>
 
     </div>
   );

@@ -18,7 +18,6 @@ const UpdateUserForm = ({ userData, onSuccess }) => {
   const handleUpdate = (e) => {
     e.preventDefault();
 
-    // ❗ TOKEN CHECK
     if (!token) {
       toast.error("Session expired ❌");
       return;
@@ -34,9 +33,7 @@ const UpdateUserForm = ({ userData, onSuccess }) => {
     })
       .then((res) => {
         if (!res.ok) {
-          if (res.status === 403) {
-            throw new Error("Forbidden");
-          }
+          if (res.status === 403) throw new Error("Forbidden");
           throw new Error("Update failed");
         }
 
@@ -53,24 +50,104 @@ const UpdateUserForm = ({ userData, onSuccess }) => {
   };
 
   return (
-    <form onSubmit={handleUpdate} className="grid grid-cols-2 gap-3">
+    <form onSubmit={handleUpdate} className="space-y-4">
 
-      <input name="name" value={user?.name || ""} onChange={handleChange} className="border p-2" />
-      <input name="gender" value={user?.gender || ""} onChange={handleChange} className="border p-2" />
+      {/* TITLE */}
+      <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
+        Update User ✏️
+      </h2>
 
-      <input type="date" name="dob" value={user?.dob || ""} onChange={handleChange} className="border p-2" />
-      <input name="occupation" value={user?.occupation || ""} onChange={handleChange} className="border p-2" />
+      {/* GRID */}
+      <div className="grid grid-cols-2 gap-4">
 
-      <input name="accountNumber" value={user?.accountNumber || ""} onChange={handleChange} className="border p-2" />
-      <input name="aadharNo" value={user?.aadharNo || ""} onChange={handleChange} className="border p-2" />
+        <input
+          name="name"
+          value={user?.name || ""}
+          onChange={handleChange}
+          placeholder="Full Name"
+          className="input"
+        />
 
-      <input name="panNo" value={user?.panNo || ""} onChange={handleChange} className="border p-2" />
-      <input name="address" value={user?.address || ""} onChange={handleChange} className="border p-2" />
+        <input
+          name="gender"
+          value={user?.gender || ""}
+          onChange={handleChange}
+          placeholder="Gender"
+          className="input"
+        />
 
-      <input type="number" name="rdAmount" value={user?.rdAmount || ""} onChange={handleChange} className="border p-2" />
-      <input type="date" name="rdDate" value={user?.rdDate || ""} onChange={handleChange} className="border p-2" />
+        <input
+          type="date"
+          name="dob"
+          value={user?.dob || ""}
+          onChange={handleChange}
+          className="input"
+        />
 
-      <button className="col-span-2 bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600">
+        <input
+          name="occupation"
+          value={user?.occupation || ""}
+          onChange={handleChange}
+          placeholder="Occupation"
+          className="input"
+        />
+
+        <input
+          name="accountNumber"
+          value={user?.accountNumber || ""}
+          onChange={handleChange}
+          placeholder="Account Number"
+          className="input"
+        />
+
+        <input
+          name="aadharNo"
+          value={user?.aadharNo || ""}
+          onChange={handleChange}
+          placeholder="Aadhar Number"
+          className="input"
+        />
+
+        <input
+          name="panNo"
+          value={user?.panNo || ""}
+          onChange={handleChange}
+          placeholder="PAN Number"
+          className="input"
+        />
+
+        <input
+          name="address"
+          value={user?.address || ""}
+          onChange={handleChange}
+          placeholder="Address"
+          className="input"
+        />
+
+        <input
+          type="number"
+          name="rdAmount"
+          value={user?.rdAmount || ""}
+          onChange={handleChange}
+          placeholder="RD Amount"
+          className="input"
+        />
+
+        <input
+          type="date"
+          name="rdDate"
+          value={user?.rdDate || ""}
+          onChange={handleChange}
+          className="input"
+        />
+
+      </div>
+
+      {/* BUTTON */}
+      <button
+        type="submit"
+        className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-semibold py-2 rounded-xl shadow hover:scale-105 transition"
+      >
         Update User
       </button>
 

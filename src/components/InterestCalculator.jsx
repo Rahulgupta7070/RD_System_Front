@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
+import { FaCalculator } from "react-icons/fa";
 
 function InterestCalculator() {
 
@@ -14,13 +16,13 @@ function InterestCalculator() {
   const calculate = () => {
 
     if (!amount || !months || !rate) {
-      alert("Fill all fields");
+      toast.warning("Fill all fields ⚠️");
       return;
     }
 
     fetch(`http://localhost:8080/scheduler/calculate?amount=${amount}&months=${months}&rate=${rate}`, {
       headers: {
-        Authorization: `Bearer ${token}`   // 🔥 FIX
+        Authorization: `Bearer ${token}`
       }
     })
       .then(res => res.json())
@@ -31,24 +33,31 @@ function InterestCalculator() {
         setMaturity(data);
         setInterest(data - total);
       })
-      .catch(() => alert("Error calculating"));
+      .catch(() => toast.error("Error calculating ❌"));
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+    <div className="flex justify-center items-center min-h-screen 
+    bg-gradient-to-br from-gray-100 to-gray-200 
+    dark:from-gray-900 dark:to-black">
 
-      <div className="bg-white p-6 rounded-xl shadow-xl w-[400px]">
+      <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg 
+      p-8 rounded-2xl shadow-2xl w-[420px] 
+      border border-gray-200 dark:border-gray-700">
 
-        <h2 className="text-xl font-bold mb-4 text-center">
-          Interest Calculator
+        {/* TITLE */}
+        <h2 className="text-2xl font-bold mb-5 text-center 
+        text-gray-800 dark:text-white flex items-center justify-center gap-2">
+          <FaCalculator /> Interest Calculator
         </h2>
 
+        {/* INPUTS */}
         <input
           type="number"
           placeholder="Monthly Amount"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          className="border p-2 w-full mb-3 rounded"
+          className="input mb-3"
         />
 
         <input
@@ -56,7 +65,7 @@ function InterestCalculator() {
           placeholder="Months"
           value={months}
           onChange={(e) => setMonths(e.target.value)}
-          className="border p-2 w-full mb-3 rounded"
+          className="input mb-3"
         />
 
         <input
@@ -64,28 +73,31 @@ function InterestCalculator() {
           placeholder="Interest %"
           value={rate}
           onChange={(e) => setRate(e.target.value)}
-          className="border p-2 w-full mb-3 rounded"
+          className="input mb-4"
         />
 
+        {/* BUTTON */}
         <button
           onClick={calculate}
-          className="bg-green-500 text-white p-2 w-full rounded"
+          className="w-full bg-gradient-to-r from-green-500 to-emerald-600 
+          text-white py-2 rounded-xl shadow-lg hover:scale-105 transition"
         >
           Calculate
         </button>
 
+        {/* RESULT */}
         {maturity > 0 && (
-          <div className="mt-4 text-center">
+          <div className="mt-6 space-y-2 text-center">
 
-            <p className="text-green-600 font-bold">
+            <p className="text-green-600 dark:text-green-400 font-bold">
               Total Deposit: ₹ {(amount * months).toLocaleString()}
             </p>
 
-            <p className="text-blue-600 font-bold">
+            <p className="text-blue-600 dark:text-blue-400 font-bold">
               Interest: ₹ {interest.toFixed(2)}
             </p>
 
-            <p className="text-purple-600 font-bold text-lg">
+            <p className="text-purple-600 dark:text-purple-400 font-bold text-lg">
               Maturity: ₹ {maturity.toFixed(2)}
             </p>
 
@@ -93,7 +105,6 @@ function InterestCalculator() {
         )}
 
       </div>
-
     </div>
   );
 }

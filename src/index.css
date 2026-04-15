@@ -1,4 +1,30 @@
-@import "tailwindcss";
-.btn {
-  @apply bg-gray-200 px-3 py-1 rounded hover:bg-blue-500 hover:text-white transition;
-} 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn {
+    @apply bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded hover:bg-blue-500 hover:text-white transition;
+  }
+}
+.input {
+  @apply bg-white dark:bg-gray-700 
+  text-gray-800 dark:text-white 
+  border border-gray-300 dark:border-gray-600 
+  px-3 py-2 rounded-lg outline-none 
+  focus:ring-2 focus:ring-blue-500;
+}
+.input {
+  @apply w-full px-3 py-2 rounded-lg 
+  bg-gray-100 dark:bg-gray-700 
+  text-gray-800 dark:text-white 
+  border border-gray-300 dark:border-gray-600 
+  outline-none focus:ring-2 focus:ring-green-500;
+}
+.input {
+  @apply w-full px-3 py-2 rounded-lg 
+  bg-gray-100 dark:bg-gray-700 
+  text-gray-800 dark:text-white 
+  border border-gray-300 dark:border-gray-600 
+  outline-none focus:ring-2 focus:ring-green-500;
+}

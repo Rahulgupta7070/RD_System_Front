@@ -15,100 +15,56 @@ const UserPassbook = ({ rid, onClose }) => {
   const [editData, setEditData] = useState(null);
   const [maturity, setMaturity] = useState(0);
 
-  // ✅ FETCH PASSBOOK
-  const fetchPassbook = () => {
-
-    if (!token || !rid) return;
-
-    fetch(`http://localhost:8080/passbook/${rid}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-      .then(res => {
-        if (!res.ok) {
-          if (res.status === 403) throw new Error("Forbidden");
-          throw new Error();
-        }
-        return res.json();
-      })
-      .then(d => {
-        if (!Array.isArray(d)) {
-          setData([]);
-          setTotal(0);
-          setTotalFine(0);
-          return;
-        }
-
-        setData(d);
-
-        const sum = d.reduce((acc, curr) => acc + Number(curr.rdAmount || 0), 0);
-        const fineSum = d.reduce((acc, curr) => acc + Number(curr.fineAmount || 0), 0);
-
-        setTotal(sum);
-        setTotalFine(fineSum);
-      })
-      .catch((err) => {
-        if (err.message === "Forbidden") {
-          toast.error("Access Denied (403) ❌");
-        } else {
-          toast.error("Failed to load passbook ❌");
-        }
-        setData([]);
-      });
-  };
-
-  // ✅ FETCH USER
-  const fetchUser = () => {
-
-    if (!token || !rid) return;
-
-    fetch(`http://localhost:8080/rdusers/${rid}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-      .then(res => {
-        if (!res.ok) throw new Error();
-        return res.json();
-      })
-      .then(d => setUser(d))
-      .catch(() => {
-        toast.error("Failed to load user ❌");
-        setUser(null);
-      });
-  };
-
-  // ✅ FETCH MATURITY
-  const fetchMaturity = () => {
-
-    if (!token || !rid) return;
-
-    fetch(`http://localhost:8080/scheduler/maturity/${rid}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-      .then(res => {
-        if (!res.ok) throw new Error();
-        return res.json();
-      })
-      .then(d => setMaturity(d))
-      .catch(() => {
-        toast.error("Failed to load maturity ❌");
-        setMaturity(0);
-      });
-  };
-
+  // ================= FETCH =================
   useEffect(() => {
     fetchPassbook();
     fetchUser();
     fetchMaturity();
   }, [rid]);
 
-  // ✅ DELETE ENTRY
+  const fetchPassbook = () => {
+    fetch(`http://localhost:8080/passbook/${rid}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then(d => {
+        setData(d || []);
+        const sum = d.reduce((a, c) => a + Number(c.rdAmount || 0), 0);
+        const fine = d.reduce((a, c) => a + Number(c.fineAmount || 0), 0);
+        setTotal(sum);
+        setTotalFine(fine);
+      });
+  };
+
+  const fetchUser = () => {
+    fetch(`http://localhost:8080/rdusers/${rid}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then(setUser);
+  };
+
+  const fetchMaturity = () => {
+    fetch(`http://localhost:8080/scheduler/maturity/${rid}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then(setMaturity);
+  };
+
+  // ================= DELETE CONFIRM =================
   const deleteEntry = (pid) => {
 
     toast(
       ({ closeToast }) => (
-        <div>
-          <p className="font-semibold mb-2">Are you sure?</p>
+        <div className="text-center">
 
-          <div className="flex gap-2">
+          <p className="font-semibold mb-3 text-gray-800 dark:text-white">
+            Delete this entry?
+          </p>
+
+          <div className="flex justify-center gap-3">
+
             <button
               onClick={() => {
                 closeToast();
@@ -118,43 +74,35 @@ const UserPassbook = ({ rid, onClose }) => {
                   headers: { Authorization: `Bearer ${token}` }
                 })
                   .then(res => {
-                    if (!res.ok) {
-                      if (res.status === 403) throw new Error("Forbidden");
-                      throw new Error();
-                    }
+                    if (!res.ok) throw new Error();
 
-                    toast.success("Entry Deleted Successfully ✅");
+                    toast.success("Deleted ✅");
                     fetchPassbook();
                     fetchMaturity();
                   })
-                  .catch((err) => {
-                    if (err.message === "Forbidden") {
-                      toast.error("Access Denied (403) ❌");
-                    } else {
-                      toast.error("Delete Failed ❌");
-                    }
-                  });
-
+                  .catch(() => toast.error("Delete Failed ❌"));
               }}
-              className="bg-red-500 text-white px-3 py-1 rounded"
+              className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600"
             >
               Yes
             </button>
 
             <button
               onClick={closeToast}
-              className="bg-gray-300 px-3 py-1 rounded"
+              className="bg-gray-300 dark:bg-gray-600 text-black dark:text-white px-4 py-1 rounded"
             >
               No
             </button>
+
           </div>
+
         </div>
       ),
       { autoClose: false }
     );
   };
 
-  // ✅ UPDATE ENTRY
+  // ================= UPDATE =================
   const updateEntry = (e) => {
     e.preventDefault();
 
@@ -164,134 +112,168 @@ const UserPassbook = ({ rid, onClose }) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify(editData),
+      body: JSON.stringify(editData)
     })
-      .then(res => {
-        if (!res.ok) {
-          if (res.status === 403) throw new Error("Forbidden");
-          throw new Error();
-        }
-
-        toast.success("Updated Successfully 🔄");
+      .then(() => {
+        toast.success("Updated ✅");
         setEditData(null);
         fetchPassbook();
         fetchMaturity();
       })
-      .catch((err) => {
-        if (err.message === "Forbidden") {
-          toast.error("Access Denied (403) ❌");
-        } else {
-          toast.error("Update Failed ❌");
-        }
-      });
+      .catch(() => toast.error("Update Failed ❌"));
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4">
+    <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-[9999]">
 
-      <div className="bg-white p-6 rounded-xl w-[750px] shadow-2xl">
+      {/* MAIN CARD */}
+      <div className="bg-white dark:bg-gray-800 text-gray-800 dark:text-white 
+      p-6 rounded-2xl w-[850px] shadow-2xl relative">
 
+        {/* HEADER */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">
             Passbook - {user?.name || "User"}
           </h2>
 
-          <button onClick={onClose} className="bg-zinc-300 p-2 rounded">
+          <button
+            onClick={onClose}
+            className="bg-gray-300 dark:bg-gray-700 p-2 rounded hover:bg-red-500 hover:text-white transition"
+          >
             <FaTimes />
           </button>
         </div>
 
-        <p className="text-green-600 font-bold">Total Deposit: ₹ {total}</p>
-        <p className="text-blue-600 font-bold">Interest: ₹ {(maturity - total).toFixed(2)}</p>
-        <p className="text-purple-600 font-bold">Maturity: ₹ {maturity.toFixed(2)}</p>
-        <p className="text-red-600 font-bold">Fine: ₹ {totalFine}</p>
+        {/* STATS */}
+        <div className="grid grid-cols-2 gap-2 mb-4">
+          <p className="text-green-600 font-bold">Total: ₹ {total}</p>
+          <p className="text-blue-500 font-bold">
+            Interest: ₹ {(maturity - total).toFixed(2)}
+          </p>
+          <p className="text-purple-500 font-bold">
+            Maturity: ₹ {maturity.toFixed(2)}
+          </p>
+          <p className="text-red-500 font-bold">
+            Fine: ₹ {totalFine}
+          </p>
+        </div>
 
+        {/* ADD BUTTON */}
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 bg-green-500 text-white px-3 py-1 my-3 rounded"
+          className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded mb-3 hover:bg-green-600"
         >
           <FaPlus /> Add Deposit
         </button>
 
-        {showForm && (
-          <AddDeposit
-            rid={rid}
-            onSuccess={() => {
-              setShowForm(false);
-              fetchPassbook();
-              fetchMaturity();
-              toast.success("Deposit Added Successfully 🎉");
-            }}
-          />
-        )}
+        {/* TABLE */}
+        <div className="overflow-auto max-h-[350px]">
+          <table className="w-full border border-gray-300 dark:border-gray-700 text-center">
 
-        {editData && (
-          <form onSubmit={updateEntry} className="mb-4 space-y-2 border p-3 rounded bg-gray-50">
-
-            <input
-              type="date"
-              value={editData.rdDate}
-              onChange={(e) =>
-                setEditData({ ...editData, rdDate: e.target.value })
-              }
-              className="border p-2 w-full"
-            />
-
-            <input
-              type="number"
-              value={editData.rdAmount}
-              onChange={(e) =>
-                setEditData({ ...editData, rdAmount: e.target.value })
-              }
-              className="border p-2 w-full"
-            />
-
-            <button className="bg-blue-500 text-white px-3 py-1 rounded">
-              Update
-            </button>
-          </form>
-        )}
-
-        <table className="w-full border">
-          <thead className="bg-gray-800 text-white">
-            <tr>
-              <th>PID</th>
-              <th>Date</th>
-              <th>Amount</th>
-              <th>Late</th>
-              <th>Fine</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {data.map((p) => (
-              <tr key={p.pid} className="text-center">
-
-                <td>{p.pid}</td>
-                <td>{new Date(p.rdDate).toLocaleDateString()}</td>
-                <td>₹ {p.rdAmount}</td>
-                <td>{p.lateDay}</td>
-                <td>₹ {p.fineAmount}</td>
-                <td>{p.status}</td>
-
-                <td className="space-x-2">
-
-                  <button onClick={() => setEditData({ ...p })}>
-                    <FaEdit />
-                  </button>
-
-                  <button onClick={() => deleteEntry(p.pid)}>
-                    <FaTrash />
-                  </button>
-
-                </td>
-
+            <thead className="bg-gray-900 text-white">
+              <tr>
+                <th>PID</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Fine</th>
+                <th>Status</th>
+                <th>Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {data.map((p) => (
+                <tr key={p.pid} className="border-b dark:border-gray-700">
+
+                  <td>{p.pid}</td>
+                  <td>{new Date(p.rdDate).toLocaleDateString()}</td>
+                  <td className="text-green-500 font-bold">₹ {p.rdAmount}</td>
+                  <td className="text-red-500">₹ {p.fineAmount}</td>
+                  <td>{p.status}</td>
+
+                  <td className="space-x-2">
+
+                    <button
+                      onClick={() => setEditData({ ...p })}
+                      className="text-yellow-500"
+                    >
+                      <FaEdit />
+                    </button>
+
+                    <button
+                      onClick={() => deleteEntry(p.pid)}
+                      className="text-red-500"
+                    >
+                      <FaTrash />
+                    </button>
+
+                  </td>
+
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* ================= ADD DEPOSIT MODAL ================= */}
+        {showForm && (
+          <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[10000]">
+
+            <div className="bg-white dark:bg-gray-800 p-5 rounded-xl w-[400px] relative">
+
+              <button
+                onClick={() => setShowForm(false)}
+                className="absolute top-2 right-2 text-red-500"
+              >
+                ✖
+              </button>
+
+              <AddDeposit
+                rid={rid}
+                onSuccess={() => {
+                  setShowForm(false);
+                  fetchPassbook();
+                  fetchMaturity();
+                  toast.success("Deposit Added 🎉");
+                }}
+              />
+
+            </div>
+          </div>
+        )}
+
+        {/* ================= EDIT FORM ================= */}
+        {editData && (
+          <div className="mt-4 p-4 border rounded bg-gray-100 dark:bg-gray-700">
+
+            <form onSubmit={updateEntry} className="space-y-2">
+
+              <input
+                type="date"
+                value={editData.rdDate}
+                onChange={(e) =>
+                  setEditData({ ...editData, rdDate: e.target.value })
+                }
+                className="input"
+              />
+
+              <input
+                type="number"
+                value={editData.rdAmount}
+                onChange={(e) =>
+                  setEditData({ ...editData, rdAmount: e.target.value })
+                }
+                className="input"
+              />
+
+              <button className="bg-blue-500 text-white px-3 py-1 rounded">
+                Update
+              </button>
+
+            </form>
+
+          </div>
+        )}
 
       </div>
     </div>
