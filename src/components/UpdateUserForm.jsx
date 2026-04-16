@@ -5,14 +5,41 @@ const UpdateUserForm = ({ userData, onSuccess }) => {
 
   const token = localStorage.getItem("token");
 
-  const [user, setUser] = useState(userData);
+  const [user, setUser] = useState({
+    name: "",
+    address: "",
+    dob: "",
+    gender: "",
+    email: "",
+    rdDate: "",
+    rdAmount: "",
+    occupation: "",
+    accountNumber: "",
+    aadharNo: "",
+    panNo: "",
+    nomineeName: "",
+    nomineeAddress: "",
+    nomineeAadharNo: "",
+    totalMonths: ""
+  });
 
   useEffect(() => {
-    setUser(userData);
+    if (userData) {
+      setUser({
+        ...userData,
+        dob: userData.dob || "",
+        rdDate: userData.rdDate || "",
+      });
+    }
   }, [userData]);
 
   const handleChange = (e) => {
-    setUser({ ...user, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    setUser({
+      ...user,
+      [name]: name === "rdAmount" ? Number(value) : value
+    });
   };
 
   const handleUpdate = (e) => {
@@ -59,48 +86,56 @@ const UpdateUserForm = ({ userData, onSuccess }) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
         {/* PERSONAL */}
-        <input name="name" value={user?.name || ""} onChange={handleChange} placeholder="Full Name" className="input" />
+        <input name="name" value={user.name} onChange={handleChange} placeholder="Full Name" className="input" />
 
-        <input name="email" value={user?.email || ""} onChange={handleChange} placeholder="Email" className="input" />
+        <input name="email" value={user.email} onChange={handleChange} placeholder="Email" className="input" />
 
-        <select
-          name="gender"
-          value={user?.gender || ""}
-          onChange={handleChange}
-          className="input"
-        >
+        <select name="gender" value={user.gender} onChange={handleChange} className="input">
           <option value="">Select Gender</option>
           <option value="MALE">Male</option>
           <option value="FEMALE">Female</option>
         </select>
 
-        <input type="date" name="dob" value={user?.dob || ""} onChange={handleChange} className="input" />
+        <input type="date" name="dob" value={user.dob} onChange={handleChange} className="input" />
 
         <div className="col-span-1 sm:col-span-2">
-          <input name="address" value={user?.address || ""} onChange={handleChange} placeholder="Address" className="input" />
+          <input name="address" value={user.address} onChange={handleChange} placeholder="Address" className="input" />
         </div>
 
         {/* ACCOUNT */}
-        <input name="occupation" value={user?.occupation || ""} onChange={handleChange} placeholder="Occupation" className="input" />
+        <input name="occupation" value={user.occupation} onChange={handleChange} placeholder="Occupation" className="input" />
 
-        <input name="accountNumber" value={user?.accountNumber || ""} onChange={handleChange} placeholder="Account Number" className="input" />
+        <input name="accountNumber" value={user.accountNumber} onChange={handleChange} placeholder="Account Number" className="input" />
 
-        <input name="aadharNo" value={user?.aadharNo || ""} onChange={handleChange} placeholder="Aadhar Number" className="input" />
+        <input name="aadharNo" value={user.aadharNo} onChange={handleChange} placeholder="Aadhar Number" className="input" />
 
-        <input name="panNo" value={user?.panNo || ""} onChange={handleChange} placeholder="PAN Number" className="input" />
+        <input name="panNo" value={user.panNo} onChange={handleChange} placeholder="PAN Number" className="input" />
 
         {/* RD */}
-        <input type="number" name="rdAmount" value={user?.rdAmount || ""} onChange={handleChange} placeholder="RD Amount" className="input" />
+        <input type="number" name="rdAmount" value={user.rdAmount} onChange={handleChange} placeholder="RD Amount" className="input" />
 
-        <input type="date" name="rdDate" value={user?.rdDate || ""} onChange={handleChange} className="input" />
+        <input type="date" name="rdDate" value={user.rdDate} onChange={handleChange} className="input" />
+
+        {/* 👉 NEW FIELD (IMPORTANT) */}
+        <select
+          name="totalMonths"
+          value={user.totalMonths}
+          onChange={handleChange}
+          className="input"
+        >
+          <option value="">Select Duration</option>
+          <option value="6">6 Months</option>
+          <option value="12">12 Months</option>
+          <option value="24">24 Months</option>
+        </select>
 
         {/* NOMINEE */}
-        <input name="nomineeName" value={user?.nomineeName || ""} onChange={handleChange} placeholder="Nominee Name" className="input" />
+        <input name="nomineeName" value={user.nomineeName} onChange={handleChange} placeholder="Nominee Name" className="input" />
 
-        <input name="nomineeAadharNo" value={user?.nomineeAadharNo || ""} onChange={handleChange} placeholder="Nominee Aadhar" className="input" />
+        <input name="nomineeAadharNo" value={user.nomineeAadharNo} onChange={handleChange} placeholder="Nominee Aadhar" className="input" />
 
         <div className="col-span-1 sm:col-span-2">
-          <input name="nomineeAddress" value={user?.nomineeAddress || ""} onChange={handleChange} placeholder="Nominee Address" className="input" />
+          <input name="nomineeAddress" value={user.nomineeAddress} onChange={handleChange} placeholder="Nominee Address" className="input" />
         </div>
 
       </div>

@@ -17,6 +17,7 @@ const AddUserForm = ({ onSuccess }) => {
     panNo: "",
     rdAmount: "",
     rdDate: "",
+    totalMonths: "", // ✅ NEW FIELD
     nomineeName: "",
     nomineeAddress: "",
     nomineeAadharNo: ""
@@ -39,6 +40,7 @@ const AddUserForm = ({ onSuccess }) => {
     if (!user.accountNumber) err.accountNumber = "Required";
     if (!user.rdAmount) err.rdAmount = "Required";
     if (!user.rdDate) err.rdDate = "Required";
+    if (!user.totalMonths) err.totalMonths = "Required"; // ✅ ADD
 
     setErrors(err);
     return Object.keys(err).length === 0;
@@ -77,6 +79,7 @@ const AddUserForm = ({ onSuccess }) => {
         panNo: "",
         rdAmount: "",
         rdDate: "",
+        totalMonths: "", // ✅ RESET
         nomineeName: "",
         nomineeAddress: "",
         nomineeAadharNo: ""
@@ -102,13 +105,8 @@ const AddUserForm = ({ onSuccess }) => {
       <Section title="Personal Details">
         <Input label="Name" name="name" value={user.name} onChange={handleChange} error={errors.name}/>
         <Input label="Email" name="email" value={user.email} onChange={handleChange} error={errors.email}/>
-        
-        <select
-          name="gender"
-          value={user.gender}
-          onChange={handleChange}
-          className="input"
-        >
+
+        <select name="gender" value={user.gender} onChange={handleChange} className="input">
           <option value="">Select Gender</option>
           <option value="MALE">Male</option>
           <option value="FEMALE">Female</option>
@@ -133,6 +131,26 @@ const AddUserForm = ({ onSuccess }) => {
       <Section title="RD Details">
         <Input type="number" label="RD Amount" name="rdAmount" value={user.rdAmount} onChange={handleChange} error={errors.rdAmount}/>
         <Input type="date" label="RD Start Date" name="rdDate" value={user.rdDate} onChange={handleChange} error={errors.rdDate}/>
+
+        {/* 🔥 PLAN SELECT */}
+        <div className="flex flex-col">
+          <label className="text-xs mb-1 text-gray-600 dark:text-gray-300">RD Plan</label>
+          <select
+            name="totalMonths"
+            value={user.totalMonths}
+            onChange={handleChange}
+            className={`p-2 rounded-md text-sm 
+            bg-gray-100 dark:bg-gray-800 
+            text-gray-900 dark:text-white 
+            border ${errors.totalMonths ? "border-red-500" : "border-gray-300 dark:border-gray-700"}`}
+          >
+            <option value="">Select Plan</option>
+            <option value="6">6 Months</option>
+            <option value="12">12 Months</option>
+            <option value="24">24 Months</option>
+          </select>
+          {errors.totalMonths && <span className="text-red-500 text-xs">{errors.totalMonths}</span>}
+        </div>
       </Section>
 
       {/* NOMINEE */}
@@ -167,7 +185,7 @@ const Section = ({ title, children }) => (
   </div>
 );
 
-/* INPUT (FIXED TEXT COLOR ISSUE) */
+/* INPUT */
 const Input = ({ label, error, ...props }) => (
   <div className="flex flex-col">
     <label className="text-xs mb-1 text-gray-600 dark:text-gray-300">{label}</label>

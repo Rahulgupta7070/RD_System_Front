@@ -15,13 +15,13 @@ const UserPassbook = ({ rid, onClose }) => {
   const [editData, setEditData] = useState(null);
   const [maturity, setMaturity] = useState(0);
 
-  // ================= FETCH =================
   useEffect(() => {
     fetchPassbook();
     fetchUser();
     fetchMaturity();
   }, [rid]);
 
+  // ================= FETCH =================
   const fetchPassbook = () => {
     fetch(`http://localhost:8080/passbook/${rid}`, {
       headers: { Authorization: `Bearer ${token}` }
@@ -52,68 +52,71 @@ const UserPassbook = ({ rid, onClose }) => {
       .then(setMaturity);
   };
 
-  // ================= DELETE CONFIRM =================
- const deleteEntry = (pid) => {
+  // ================= PDF =================
+  const viewPdf = async () => {
+    try {
+      const res = await fetch(`http://localhost:8080/pdf/${rid}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
 
-  toast(
-    ({ closeToast }) => (
-      <div className="bg-white dark:bg-gray-800 text-gray-800 dark:text-white 
-      p-4 rounded-lg shadow-lg text-center">
+      if (!res.ok) throw new Error();
 
-        <p className="font-semibold mb-3">
-          Delete this entry?
-        </p>
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
 
-        <div className="flex justify-center gap-3">
-
-          <button
-            onClick={() => {
-              closeToast();
-
-              fetch(`http://localhost:8080/pdelete/${pid}`, {
-                method: "DELETE",
-                headers: { Authorization: `Bearer ${token}` }
-              })
-                .then(res => {
-                  if (!res.ok) throw new Error();
-
-                  toast.success("Deleted ✅");
-                  fetchPassbook();
-                  fetchMaturity();
-                })
-                .catch(() => toast.error("Delete Failed ❌"));
-            }}
-            className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600"
-          >
-            Yes
-          </button>
-
-          <button
-            onClick={closeToast}
-            className="bg-gray-300 dark:bg-gray-600 
-            text-black dark:text-white px-4 py-1 rounded"
-          >
-            No
-          </button>
-
-        </div>
-
-      </div>
-    ),
-    {
-      autoClose: false,
-      closeOnClick: false,
-      draggable: false,
-      style: {
-        background: "transparent",
-        boxShadow: "none"
-      }
+      window.open(url, "_blank");
+    } catch {
+      toast.error("PDF open failed ❌");
     }
-  );
-};
+  };
+
+  const downloadPdf = async () => {
+    try {
+      const res = await fetch(`http://localhost:8080/pdf/${rid}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (!res.ok) throw new Error();
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `passbook_${rid}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } catch {
+      toast.error("Download failed ❌");
+    }
+  };
+
+  // ================= PROGRESS =================
+  const progress = user ? (data.length / user.totalMonths) * 100 : 0;
+
+  // ================= DELETE =================
+  const deleteEntry = (pid) => {
+    fetch(`http://localhost:8080/pdelete/${pid}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(() => {
+        toast.success("Deleted ✅");
+        fetchPassbook();
+        fetchMaturity();
+      })
+      .catch(() => toast.error("Delete Failed ❌"));
+  };
+
   // ================= UPDATE =================
   const updateEntry = (e) => {
     e.preventDefault();
+
+    const formattedData = {
+      ...editData,
+      rdDate: editData.rdDate.split("T")[0]
+    };
 
     fetch(`http://localhost:8080/pupdate/${editData.pid}`, {
       method: "PUT",
@@ -121,7 +124,7 @@ const UserPassbook = ({ rid, onClose }) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify(editData)
+      body: JSON.stringify(formattedData)
     })
       .then(() => {
         toast.success("Updated ✅");
@@ -135,104 +138,150 @@ const UserPassbook = ({ rid, onClose }) => {
   return (
     <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-[9999]">
 
-      {/* MAIN CARD */}
       <div className="bg-white dark:bg-gray-800 text-gray-800 dark:text-white 
-      p-6 rounded-2xl w-[850px] shadow-2xl relative">
+      p-6 rounded-2xl w-[900px] shadow-2xl relative">
 
         {/* HEADER */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">
-            Passbook - {user?.name || "User"}
+            Passbook - {user?.name}
           </h2>
 
-          <button
-            onClick={onClose}
-            className="bg-gray-300 dark:bg-gray-700 p-2 rounded hover:bg-red-500 hover:text-white transition"
-          >
+          <button onClick={onClose} className="bg-gray-300 p-2 rounded">
             <FaTimes />
           </button>
         </div>
 
-        {/* STATS */}
-        <div className="grid grid-cols-2 gap-2 mb-4">
-          <p className="text-green-600 font-bold">Total: ₹ {total}</p>
-          <p className="text-blue-500 font-bold">
-            Interest: ₹ {(maturity - total).toFixed(2)}
-          </p>
-          <p className="text-purple-500 font-bold">
-            Maturity: ₹ {maturity.toFixed(2)}
-          </p>
-          <p className="text-red-500 font-bold">
-            Fine: ₹ {totalFine}
-          </p>
+        <div className="flex gap-6">
+
+          {/* LEFT */}
+          <div className="flex flex-col items-center w-[200px]">
+
+            <div className="relative w-32 h-32">
+              <svg className="w-full h-full transform -rotate-90">
+                <circle cx="50%" cy="50%" r="50"
+                  stroke="#e5e7eb" strokeWidth="10" fill="none" />
+
+                <circle cx="50%" cy="50%" r="50"
+                  stroke="#22c55e"
+                  strokeWidth="10"
+                  fill="none"
+                  strokeDasharray={314}
+                  strokeDashoffset={314 - (314 * progress) / 100}
+                  strokeLinecap="round"
+                />
+              </svg>
+
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-lg font-bold text-green-500">
+                  {Math.round(progress)}%
+                </span>
+                <span className="text-xs">
+                  {data.length}/{user?.totalMonths}
+                </span>
+              </div>
+            </div>
+
+            <p className="mt-2">RD Progress</p>
+          </div>
+
+          {/* RIGHT */}
+          <div className="flex-1">
+
+            {/* STATS */}
+            <div className="grid grid-cols-2 gap-2 mb-4">
+              <p className="text-green-600 font-bold">Total: ₹ {total}</p>
+              <p className="text-blue-500 font-bold">
+                Interest: ₹ {(maturity - total).toFixed(2)}
+              </p>
+              <p className="text-purple-500 font-bold">
+                Maturity: ₹ {maturity.toFixed(2)}
+              </p>
+              <p className="text-red-500 font-bold">
+                Fine: ₹ {totalFine}
+              </p>
+              <p className="font-semibold">
+                Plan: {user?.totalMonths} Months
+              </p>
+            </div>
+
+            {/* BUTTONS */}
+            <div className="flex gap-3 mb-3">
+
+              <button
+                onClick={() => setShowForm(true)}
+                className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg"
+              >
+                <FaPlus /> Add Deposit
+              </button>
+
+              <button
+                onClick={viewPdf}
+                className="bg-purple-500 text-white px-4 py-2 rounded-lg"
+              >
+                👁 View
+              </button>
+
+              <button
+                onClick={downloadPdf}
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+              >
+                ⬇ Download
+              </button>
+
+            </div>
+
+            {/* TABLE */}
+            <div className="overflow-auto max-h-[350px]">
+              <table className="w-full text-sm rounded-xl overflow-hidden">
+
+                <thead className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
+                  <tr>
+                    <th className="p-2">PID</th>
+                    <th className="p-2">Date</th>
+                    <th className="p-2">Amount</th>
+                    <th className="p-2">Fine</th>
+                    <th className="p-2">Status</th>
+                    <th className="p-2">Action</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {data.map((p) => (
+                    <tr key={p.pid} className="hover:bg-gray-100 dark:hover:bg-gray-700 transition text-center">
+                      <td>{p.pid}</td>
+                      <td>{new Date(p.rdDate).toLocaleDateString()}</td>
+                      <td className="text-green-500">₹ {p.rdAmount}</td>
+                      <td className="text-red-500">₹ {p.fineAmount}</td>
+                      <td>{p.status}</td>
+
+                      <td className="flex justify-center gap-2">
+                        <button onClick={() => setEditData(p)} className="text-blue-500">
+                          <FaEdit />
+                        </button>
+
+                        <button onClick={() => deleteEntry(p.pid)} className="text-red-500">
+                          <FaTrash />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+
+              </table>
+            </div>
+
+          </div>
         </div>
 
-        {/* ADD BUTTON */}
-        <button
-          onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded mb-3 hover:bg-green-600"
-        >
-          <FaPlus /> Add Deposit
-        </button>
-
-        {/* TABLE */}
-        <div className="overflow-auto max-h-[350px]">
-          <table className="w-full border border-gray-300 dark:border-gray-700 text-center">
-
-            <thead className="bg-gray-900 text-white">
-              <tr>
-                <th>PID</th>
-                <th>Date</th>
-                <th>Amount</th>
-                <th>Fine</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {data.map((p) => (
-                <tr key={p.pid} className="border-b dark:border-gray-700">
-
-                  <td>{p.pid}</td>
-                  <td>{new Date(p.rdDate).toLocaleDateString()}</td>
-                  <td className="text-green-500 font-bold">₹ {p.rdAmount}</td>
-                  <td className="text-red-500">₹ {p.fineAmount}</td>
-                  <td>{p.status}</td>
-
-                  <td className="space-x-2">
-
-                    <button
-                      onClick={() => setEditData({ ...p })}
-                      className="text-yellow-500"
-                    >
-                      <FaEdit />
-                    </button>
-
-                    <button
-                      onClick={() => deleteEntry(p.pid)}
-                      className="text-red-500"
-                    >
-                      <FaTrash />
-                    </button>
-
-                  </td>
-
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* ================= ADD DEPOSIT MODAL ================= */}
+        {/* ADD POPUP */}
         {showForm && (
-          <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[10000]">
-
-            <div className="bg-white dark:bg-gray-800 p-5 rounded-xl w-[400px] relative">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-[10000]">
+            <div className="relative w-[380px] p-5 rounded-2xl shadow-2xl bg-white dark:bg-gray-900">
 
               <button
                 onClick={() => setShowForm(false)}
-                className="absolute top-2 right-2 text-red-500"
+                className="absolute top-3 right-3 bg-gray-200 dark:bg-gray-700 hover:bg-red-500 p-2 rounded-full"
               >
                 ✖
               </button>
@@ -246,41 +295,81 @@ const UserPassbook = ({ rid, onClose }) => {
                   toast.success("Deposit Added 🎉");
                 }}
               />
-
             </div>
           </div>
         )}
 
-        {/* ================= EDIT FORM ================= */}
+        {/* UPDATE POPUP */}
         {editData && (
-          <div className="mt-4 p-4 border rounded bg-gray-100 dark:bg-gray-700">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-[10000]">
 
-            <form onSubmit={updateEntry} className="space-y-2">
+            <div className="relative w-[400px] p-6 rounded-2xl shadow-2xl
+              bg-white dark:bg-gray-900 
+              text-gray-800 dark:text-white
+              border border-gray-300 dark:border-gray-700">
 
-              <input
-                type="date"
-                value={editData.rdDate}
-                onChange={(e) =>
-                  setEditData({ ...editData, rdDate: e.target.value })
-                }
-                className="input"
-              />
-
-              <input
-                type="number"
-                value={editData.rdAmount}
-                onChange={(e) =>
-                  setEditData({ ...editData, rdAmount: e.target.value })
-                }
-                className="input"
-              />
-
-              <button className="bg-blue-500 text-white px-3 py-1 rounded">
-                Update
+              <button
+                onClick={() => setEditData(null)}
+                className="absolute top-3 right-3 
+                bg-gray-200 dark:bg-gray-700 
+                hover:bg-red-500 hover:text-white
+                p-2 rounded-full"
+              >
+                ✖
               </button>
 
-            </form>
+              <h2 className="text-xl font-bold mb-4 text-center">
+                ✏ Update Deposit
+              </h2>
 
+              <form onSubmit={updateEntry} className="space-y-4">
+
+                <input
+                  type="date"
+                  value={editData.rdDate?.split("T")[0]}
+                  onChange={(e) =>
+                    setEditData({ ...editData, rdDate: e.target.value })
+                  }
+                  className="w-full p-3 rounded-lg
+                  bg-gray-100 dark:bg-gray-800
+                  border border-gray-300 dark:border-gray-600
+                  text-black dark:text-white"
+                />
+
+                <input
+                  type="number"
+                  value={editData.rdAmount}
+                  onChange={(e) =>
+                    setEditData({ ...editData, rdAmount: e.target.value })
+                  }
+                  className="w-full p-3 rounded-lg
+                  bg-gray-100 dark:bg-gray-800
+                  border border-gray-300 dark:border-gray-600
+                  text-black dark:text-white"
+                />
+
+                <div className="flex justify-end gap-3">
+
+                  <button
+                    type="button"
+                    onClick={() => setEditData(null)}
+                    className="px-4 py-2 bg-gray-400 text-white rounded-lg"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    type="submit"
+                    className="px-5 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                  >
+                    Update
+                  </button>
+
+                </div>
+
+              </form>
+
+            </div>
           </div>
         )}
 

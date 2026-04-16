@@ -65,6 +65,8 @@ const AddDeposit = ({ rid, onSuccess }) => {
 
       if (!res.ok) throw new Error();
 
+      toast.success("Deposit Added 🎉");
+
       setData({
         rid: rid,
         rdDate: "",
@@ -81,33 +83,56 @@ const AddDeposit = ({ rid, onSuccess }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
 
       {/* TITLE */}
-      <h2 className="text-lg font-bold text-gray-800 dark:text-white text-center">
-        Add Deposit 💰
-      </h2>
+      <div className="text-center">
+        <h2 className="text-lg font-bold text-gray-800 dark:text-white">
+          Add Deposit 💰
+        </h2>
+        <p className="text-xs text-gray-500 dark:text-gray-400">
+          Enter monthly deposit details
+        </p>
+      </div>
 
       {/* DATE */}
-      <input
-        type="date"
-        name="rdDate"
-        value={data.rdDate}
-        onChange={handleChange}
-        className="input w-full h-10"
-        required
-      />
+      <div className="flex flex-col">
+        <label className="text-xs mb-1 text-gray-600 dark:text-gray-300">
+          Deposit Date
+        </label>
+        <input
+          type="date"
+          name="rdDate"
+          value={data.rdDate}
+          onChange={handleChange}
+          className="p-2 rounded-md text-sm 
+          bg-gray-100 dark:bg-gray-800 
+          border border-gray-300 dark:border-gray-600 
+          text-gray-900 dark:text-white
+          focus:outline-none focus:ring-2 focus:ring-green-500"
+          required
+        />
+      </div>
 
       {/* AMOUNT */}
-      <input
-        type="number"
-        name="rdAmount"
-        value={data.rdAmount}
-        placeholder="Enter Amount"
-        onChange={handleChange}
-        className="input w-full h-10"
-        required
-      />
+      <div className="flex flex-col">
+        <label className="text-xs mb-1 text-gray-600 dark:text-gray-300">
+          Amount
+        </label>
+        <input
+          type="number"
+          name="rdAmount"
+          value={data.rdAmount}
+          placeholder="Enter Amount"
+          onChange={handleChange}
+          className="p-2 rounded-md text-sm 
+          bg-gray-100 dark:bg-gray-800 
+          border border-gray-300 dark:border-gray-600 
+          text-gray-900 dark:text-white
+          focus:outline-none focus:ring-2 focus:ring-green-500"
+          required
+        />
+      </div>
 
       {/* QUICK BUTTONS */}
       <div className="flex gap-2 justify-center">
@@ -116,9 +141,11 @@ const AddDeposit = ({ rid, onSuccess }) => {
             type="button"
             key={amt}
             onClick={() => setData({ ...data, rdAmount: amt })}
-            className="bg-gray-200 dark:bg-gray-700 
+            className="px-3 py-1 rounded-md 
+            bg-gray-200 dark:bg-gray-700 
             text-gray-800 dark:text-white 
-            px-3 py-1 rounded hover:scale-105 transition"
+            hover:bg-green-500 hover:text-white 
+            transition"
           >
             ₹ {amt}
           </button>
@@ -129,8 +156,10 @@ const AddDeposit = ({ rid, onSuccess }) => {
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-gradient-to-r from-green-500 to-emerald-600 
-        text-white py-2 rounded-xl shadow-lg hover:scale-105 transition"
+        className="w-full py-2 rounded-xl text-white 
+        bg-gradient-to-r from-green-500 to-emerald-600 
+        hover:from-green-600 hover:to-emerald-700
+        shadow-lg transition transform hover:scale-[1.02]"
       >
         {loading ? "Adding..." : "Add Deposit"}
       </button>

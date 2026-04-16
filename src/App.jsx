@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet, Navigate, useLocation } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
@@ -8,12 +8,31 @@ import Deposit from "./components/Deposit";
 import InterestCalculator from "./components/InterestCalculator";
 import Dashboard from "./components/Dashboard";
 import LoginPage from "./components/LoginPage";
-import ProtectedRoute from "./components/ProtectedRoute";
 import CreateAdmin from "./components/CreateAdmin";
 import AdminList from "./components/AdminList";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+
+// ✅ PROTECTED ROUTE
+const ProtectedRoute = ({ children }) => {
+  const token = localStorage.getItem("token");
+
+  return token ? children : <Navigate to="/login" />;
+};
+
+
+// ✅ ADMIN PROTECTION
+const AdminRoute = ({ children }) => {
+  const role = localStorage.getItem("role");
+
+  if (role !== "ROLE_SUPER_ADMIN") {
+    return <Navigate to="/" />;
+  }
+
+  return children;
+};
 
 
 // ✅ LAYOUT
@@ -33,10 +52,8 @@ const Layout = () => {
   );
 };
 
+
 function App() {
-
-  const role = localStorage.getItem("role");
-
   return (
     <BrowserRouter>
 
@@ -58,19 +75,30 @@ function App() {
           <Route path="/deposit" element={<Deposit />} />
           <Route path="/interest-cal" element={<InterestCalculator />} />
 
-          {/* 👑 ONLY SUPER ADMIN */}
-          {role === "ROLE_SUPER_ADMIN" && (
-            <>
-            <Route path="/create-admin" element={<CreateAdmin />} />
-             <Route path="/admin-list" element={<AdminList />} />
-             </>
-          )}
+          {/* 👑 ADMIN ROUTES */}
+          <Route
+            path="/create-admin"
+            element={
+              <AdminRoute>
+                <CreateAdmin />
+              </AdminRoute>
+            }
+          />
+
+          <Route
+            path="/admin-list"
+            element={
+              <AdminRoute>
+                <AdminList />
+              </AdminRoute>
+            }
+          />
 
         </Route>
 
       </Routes>
 
-      <ToastContainer 
+      <ToastContainer
         position="top-right"
         autoClose={2000}
         newestOnTop
