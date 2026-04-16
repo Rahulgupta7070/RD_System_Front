@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { FaUser, FaRupeeSign } from "react-icons/fa";
 
 const Deposit = () => {
 
@@ -113,9 +112,7 @@ const Deposit = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
 
           {/* SEARCH */}
-          <div className="relative" onClick={(e) => e.stopPropagation()}>
-            <FaUser className="absolute left-3 top-3 text-gray-500" />
-
+          <div className="relative">
             <input
               type="text"
               placeholder="Search user..."
@@ -125,7 +122,7 @@ const Deposit = () => {
                 setShowDropdown(true);
               }}
               onFocus={() => setShowDropdown(true)}
-              className="w-full pl-10 pr-3 py-2 rounded-lg 
+              className="w-full px-3 py-2 rounded-lg 
               bg-gray-100 dark:bg-gray-700 
               text-gray-800 dark:text-white 
               border border-gray-300 dark:border-gray-600 
@@ -162,21 +159,17 @@ const Deposit = () => {
             type="date"
             value={data.rdDate}
             onChange={(e) => setData({ ...data, rdDate: e.target.value })}
-            className="input"
+            className="input w-full"
           />
 
           {/* AMOUNT */}
-          <div className="relative">
-            <FaRupeeSign className="absolute left-3 top-3 text-gray-500" />
-
-            <input
-              type="number"
-              value={data.rdAmount}
-              onChange={(e) => setData({ ...data, rdAmount: e.target.value })}
-              placeholder="Enter Amount"
-              className="input pl-10"
-            />
-          </div>
+          <input
+            type="number"
+            value={data.rdAmount}
+            onChange={(e) => setData({ ...data, rdAmount: e.target.value })}
+            placeholder="Enter Amount"
+            className="input w-full"
+          />
 
           {/* QUICK BUTTONS */}
           <div className="flex gap-2">

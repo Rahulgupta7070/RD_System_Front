@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { FaRupeeSign, FaCalendarAlt } from "react-icons/fa";
 
 const AddDeposit = ({ rid, onSuccess }) => {
 
@@ -90,31 +89,25 @@ const AddDeposit = ({ rid, onSuccess }) => {
       </h2>
 
       {/* DATE */}
-      <div className="relative">
-        <FaCalendarAlt className="absolute left-3 top-3 text-gray-500" />
-        <input
-          type="date"
-          name="rdDate"
-          value={data.rdDate}
-          onChange={handleChange}
-          className="input pl-10"
-          required
-        />
-      </div>
+      <input
+        type="date"
+        name="rdDate"
+        value={data.rdDate}
+        onChange={handleChange}
+        className="input w-full h-10"
+        required
+      />
 
       {/* AMOUNT */}
-      <div className="relative">
-        <FaRupeeSign className="absolute left-3 top-3 text-gray-500" />
-        <input
-          type="number"
-          name="rdAmount"
-          value={data.rdAmount}
-          placeholder="Enter Amount"
-          onChange={handleChange}
-          className="input pl-10"
-          required
-        />
-      </div>
+      <input
+        type="number"
+        name="rdAmount"
+        value={data.rdAmount}
+        placeholder="Enter Amount"
+        onChange={handleChange}
+        className="input w-full h-10"
+        required
+      />
 
       {/* QUICK BUTTONS */}
       <div className="flex gap-2 justify-center">

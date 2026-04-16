@@ -53,55 +53,64 @@ const UserPassbook = ({ rid, onClose }) => {
   };
 
   // ================= DELETE CONFIRM =================
-  const deleteEntry = (pid) => {
+ const deleteEntry = (pid) => {
 
-    toast(
-      ({ closeToast }) => (
-        <div className="text-center">
+  toast(
+    ({ closeToast }) => (
+      <div className="bg-white dark:bg-gray-800 text-gray-800 dark:text-white 
+      p-4 rounded-lg shadow-lg text-center">
 
-          <p className="font-semibold mb-3 text-gray-800 dark:text-white">
-            Delete this entry?
-          </p>
+        <p className="font-semibold mb-3">
+          Delete this entry?
+        </p>
 
-          <div className="flex justify-center gap-3">
+        <div className="flex justify-center gap-3">
 
-            <button
-              onClick={() => {
-                closeToast();
+          <button
+            onClick={() => {
+              closeToast();
 
-                fetch(`http://localhost:8080/pdelete/${pid}`, {
-                  method: "DELETE",
-                  headers: { Authorization: `Bearer ${token}` }
+              fetch(`http://localhost:8080/pdelete/${pid}`, {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` }
+              })
+                .then(res => {
+                  if (!res.ok) throw new Error();
+
+                  toast.success("Deleted ✅");
+                  fetchPassbook();
+                  fetchMaturity();
                 })
-                  .then(res => {
-                    if (!res.ok) throw new Error();
+                .catch(() => toast.error("Delete Failed ❌"));
+            }}
+            className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600"
+          >
+            Yes
+          </button>
 
-                    toast.success("Deleted ✅");
-                    fetchPassbook();
-                    fetchMaturity();
-                  })
-                  .catch(() => toast.error("Delete Failed ❌"));
-              }}
-              className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600"
-            >
-              Yes
-            </button>
-
-            <button
-              onClick={closeToast}
-              className="bg-gray-300 dark:bg-gray-600 text-black dark:text-white px-4 py-1 rounded"
-            >
-              No
-            </button>
-
-          </div>
+          <button
+            onClick={closeToast}
+            className="bg-gray-300 dark:bg-gray-600 
+            text-black dark:text-white px-4 py-1 rounded"
+          >
+            No
+          </button>
 
         </div>
-      ),
-      { autoClose: false }
-    );
-  };
 
+      </div>
+    ),
+    {
+      autoClose: false,
+      closeOnClick: false,
+      draggable: false,
+      style: {
+        background: "transparent",
+        boxShadow: "none"
+      }
+    }
+  );
+};
   // ================= UPDATE =================
   const updateEntry = (e) => {
     e.preventDefault();

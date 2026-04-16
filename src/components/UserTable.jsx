@@ -265,30 +265,35 @@ const deleteUser = (id) => {
       </div>
 
       {/* ================= ADD USER MODAL ================= */}
-      {showForm && (
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[9999]">
+  
 
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl w-[600px] shadow-2xl relative">
+{showForm && (
+  <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[9999] p-2">
 
-            <button
-              onClick={() => setShowForm(false)}
-              className="absolute top-3 right-3 text-red-500 text-xl"
-            >
-              ✖
-            </button>
+    {/* MODAL BOX */}
+    <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-2xl relative">
 
-            <AddUserForm
-              onSuccess={() => {
-                setShowForm(false);
-                fetchUsers();
-              }}
-            />
+      {/* CLOSE BUTTON */}
+      <button
+        onClick={() => setShowForm(false)}
+        className="sticky top-0 float-right m-3 text-red-500 text-xl z-10"
+      >
+        ✖
+      </button>
 
-          </div>
+      {/* FORM CONTENT */}
+      <div className="p-4 sm:p-6">
+        <AddUserForm
+          onSuccess={() => {
+            setShowForm(false);
+            fetchUsers();
+          }}
+        />
+      </div>
 
-        </div>
-      )}
-
+    </div>
+  </div>
+)}
       {/* ================= EDIT USER MODAL ================= */}
       {showEditForm && (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[9999]">

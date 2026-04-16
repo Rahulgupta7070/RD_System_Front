@@ -7,15 +7,19 @@ const AddUserForm = ({ onSuccess }) => {
 
   const [user, setUser] = useState({
     name: "",
+    email: "",
     gender: "",
     dob: "",
+    address: "",
     occupation: "",
     accountNumber: "",
     aadharNo: "",
     panNo: "",
-    address: "",
     rdAmount: "",
     rdDate: "",
+    nomineeName: "",
+    nomineeAddress: "",
+    nomineeAadharNo: ""
   });
 
   const [errors, setErrors] = useState({});
@@ -26,44 +30,28 @@ const AddUserForm = ({ onSuccess }) => {
   };
 
   const validate = () => {
-    let newErrors = {};
+    let err = {};
 
-    if (!user.name) newErrors.name = "Name is required";
-    if (!user.gender) newErrors.gender = "Gender is required";
-    if (!user.accountNumber) newErrors.accountNumber = "Account number required";
+    if (!user.name) err.name = "Required";
+    if (!user.email) err.email = "Required";
+    if (!user.gender) err.gender = "Required";
+    if (!user.dob) err.dob = "Required";
+    if (!user.accountNumber) err.accountNumber = "Required";
+    if (!user.rdAmount) err.rdAmount = "Required";
+    if (!user.rdDate) err.rdDate = "Required";
 
-    if (!/^\d{12}$/.test(user.aadharNo)) {
-      newErrors.aadharNo = "Aadhar must be 12 digits";
-    }
-
-    if (user.panNo && !/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(user.panNo)) {
-      newErrors.panNo = "Invalid PAN format";
-    }
-
-    if (!user.address) newErrors.address = "Address required";
-    if (!user.rdAmount || user.rdAmount <= 0) newErrors.rdAmount = "Amount must be > 0";
-    if (!user.rdDate) newErrors.rdDate = "RD date required";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setErrors(err);
+    return Object.keys(err).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!token) {
-      toast.error("Session expired ❌");
-      return;
-    }
-
-    if (!validate()) {
-      toast.warning("Fix errors ⚠️");
-      return;
-    }
-
-    setLoading(true);
+    if (!validate()) return;
 
     try {
+      setLoading(true);
+
       const res = await fetch("http://localhost:8080/rdusers/saveUser", {
         method: "POST",
         headers: {
@@ -79,18 +67,21 @@ const AddUserForm = ({ onSuccess }) => {
 
       setUser({
         name: "",
+        email: "",
         gender: "",
         dob: "",
+        address: "",
         occupation: "",
         accountNumber: "",
         aadharNo: "",
         panNo: "",
-        address: "",
         rdAmount: "",
         rdDate: "",
+        nomineeName: "",
+        nomineeAddress: "",
+        nomineeAadharNo: ""
       });
 
-      setErrors({});
       onSuccess();
 
     } catch {
@@ -101,49 +92,61 @@ const AddUserForm = ({ onSuccess }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
 
-      <h2 className="text-xl font-bold text-gray-800 dark:text-white">
+      <h2 className="text-lg font-bold text-center text-gray-800 dark:text-white">
         Add User 👤
       </h2>
 
-      <div className="grid grid-cols-2 gap-4">
+      {/* PERSONAL */}
+      <Section title="Personal Details">
+        <Input label="Name" name="name" value={user.name} onChange={handleChange} error={errors.name}/>
+        <Input label="Email" name="email" value={user.email} onChange={handleChange} error={errors.email}/>
+        
+        <select
+          name="gender"
+          value={user.gender}
+          onChange={handleChange}
+          className="input"
+        >
+          <option value="">Select Gender</option>
+          <option value="MALE">Male</option>
+          <option value="FEMALE">Female</option>
+        </select>
 
-        {/* INPUT FIELD COMPONENT */}
-        {[
-          { name: "name", placeholder: "Name" },
-          { name: "gender", placeholder: "Gender" },
-          { name: "dob", type: "date" },
-          { name: "occupation", placeholder: "Occupation" },
-          { name: "accountNumber", placeholder: "Account No" },
-          { name: "aadharNo", placeholder: "Aadhar No" },
-          { name: "panNo", placeholder: "PAN No" },
-          { name: "address", placeholder: "Address" },
-          { name: "rdAmount", type: "number", placeholder: "RD Amount" },
-          { name: "rdDate", type: "date" },
-        ].map((field, i) => (
-          <div key={i}>
-            <input
-              type={field.type || "text"}
-              name={field.name}
-              placeholder={field.placeholder}
-              value={user[field.name]}
-              onChange={handleChange}
-              className={`input ${
-                errors[field.name] ? "border-red-500 ring-1 ring-red-500" : ""
-              }`}
-            />
-            <p className="text-red-500 text-sm">{errors[field.name]}</p>
-          </div>
-        ))}
+        <Input type="date" label="DOB" name="dob" value={user.dob} onChange={handleChange} error={errors.dob}/>
 
-      </div>
+        <div className="col-span-1 sm:col-span-2">
+          <Input label="Address" name="address" value={user.address} onChange={handleChange}/>
+        </div>
+      </Section>
 
-      {/* BUTTON */}
+      {/* ACCOUNT */}
+      <Section title="Account Details">
+        <Input label="Occupation" name="occupation" value={user.occupation} onChange={handleChange}/>
+        <Input label="Account Number" name="accountNumber" value={user.accountNumber} onChange={handleChange} error={errors.accountNumber}/>
+        <Input label="Aadhar Number" name="aadharNo" value={user.aadharNo} onChange={handleChange}/>
+        <Input label="PAN Number" name="panNo" value={user.panNo} onChange={handleChange}/>
+      </Section>
+
+      {/* RD */}
+      <Section title="RD Details">
+        <Input type="number" label="RD Amount" name="rdAmount" value={user.rdAmount} onChange={handleChange} error={errors.rdAmount}/>
+        <Input type="date" label="RD Start Date" name="rdDate" value={user.rdDate} onChange={handleChange} error={errors.rdDate}/>
+      </Section>
+
+      {/* NOMINEE */}
+      <Section title="Nominee Details">
+        <Input label="Nominee Name" name="nomineeName" value={user.nomineeName} onChange={handleChange}/>
+        <Input label="Nominee Aadhar" name="nomineeAadharNo" value={user.nomineeAadharNo} onChange={handleChange}/>
+        <div className="col-span-1 sm:col-span-2">
+          <Input label="Nominee Address" name="nomineeAddress" value={user.nomineeAddress} onChange={handleChange}/>
+        </div>
+      </Section>
+
       <button
         disabled={loading}
-        className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 
-        text-white py-2 rounded-xl shadow-lg hover:scale-105 transition"
+        className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-2 rounded-lg"
       >
         {loading ? "Saving..." : "Save User"}
       </button>
@@ -151,5 +154,33 @@ const AddUserForm = ({ onSuccess }) => {
     </form>
   );
 };
+
+/* SECTION */
+const Section = ({ title, children }) => (
+  <div>
+    <h3 className="text-sm font-semibold mb-2 text-gray-500 dark:text-gray-300">
+      {title}
+    </h3>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {children}
+    </div>
+  </div>
+);
+
+/* INPUT (FIXED TEXT COLOR ISSUE) */
+const Input = ({ label, error, ...props }) => (
+  <div className="flex flex-col">
+    <label className="text-xs mb-1 text-gray-600 dark:text-gray-300">{label}</label>
+    <input
+      {...props}
+      className={`p-2 rounded-md text-sm 
+      bg-gray-100 dark:bg-gray-800 
+      text-gray-900 dark:text-white 
+      border ${error ? "border-red-500" : "border-gray-300 dark:border-gray-700"}
+      focus:outline-none focus:ring-2 focus:ring-blue-500`}
+    />
+    {error && <span className="text-red-500 text-xs">{error}</span>}
+  </div>
+);
 
 export default AddUserForm;

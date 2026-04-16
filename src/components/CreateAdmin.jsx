@@ -7,7 +7,7 @@ const CreateAdmin = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // 🔥 ROLE CHECK (extra safety)
+  // 🔥 ROLE CHECK
   useEffect(() => {
     const role = localStorage.getItem("role");
 
@@ -17,7 +17,8 @@ const CreateAdmin = () => {
     }
   }, []);
 
-  const handleCreate = async () => {
+  const handleCreate = async (e) => {
+    e.preventDefault(); // 🔥 important (form submit control)
 
     if (!email || !password) {
       toast.warning("Fill all fields ⚠️");
@@ -55,6 +56,7 @@ const CreateAdmin = () => {
 
       toast.success("Admin Created Successfully 🎉");
 
+      // 🔥 reset fields
       setEmail("");
       setPassword("");
 
@@ -78,36 +80,46 @@ const CreateAdmin = () => {
           Create Admin 👑
         </h2>
 
-        {/* EMAIL */}
-        <input
-          type="email"
-          placeholder="New Admin Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full border dark:border-gray-600 p-2 mb-4 rounded-lg bg-white dark:bg-gray-700 text-black dark:text-white focus:ring-2 focus:ring-green-500 outline-none"
-        />
+        {/* 🔥 FORM START */}
+        <form autoComplete="off" onSubmit={handleCreate}>
 
-        {/* PASSWORD */}
-        <input
-          type="password"
-          placeholder="New Admin Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full border dark:border-gray-600 p-2 mb-5 rounded-lg bg-white dark:bg-gray-700 text-black dark:text-white focus:ring-2 focus:ring-green-500 outline-none"
-        />
+          {/* EMAIL */}
+          <input
+            type="email"
+            name="random_admin_email"
+            autoComplete="off"
+            placeholder="New Admin Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full border dark:border-gray-600 p-2 mb-4 rounded-lg bg-white dark:bg-gray-700 text-black dark:text-white focus:ring-2 focus:ring-green-500 outline-none"
+          />
 
-        {/* BUTTON */}
-        <button
-          onClick={handleCreate}
-          disabled={loading}
-          className={`w-full py-2 rounded-xl text-white font-semibold transition
-            ${loading
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-green-500 hover:bg-green-600 hover:scale-105"}
-          `}
-        >
-          {loading ? "Creating..." : "Create Admin"}
-        </button>
+          {/* PASSWORD */}
+          <input
+            type="password"
+            name="random_admin_password"
+            autoComplete="new-password"
+            placeholder="New Admin Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full border dark:border-gray-600 p-2 mb-5 rounded-lg bg-white dark:bg-gray-700 text-black dark:text-white focus:ring-2 focus:ring-green-500 outline-none"
+          />
+
+          {/* BUTTON */}
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full py-2 rounded-xl text-white font-semibold transition
+              ${loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-green-500 hover:bg-green-600 hover:scale-105"}
+            `}
+          >
+            {loading ? "Creating..." : "Create Admin"}
+          </button>
+
+        </form>
+        {/* 🔥 FORM END */}
 
       </div>
 

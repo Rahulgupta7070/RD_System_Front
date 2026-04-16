@@ -52,98 +52,59 @@ const UpdateUserForm = ({ userData, onSuccess }) => {
   return (
     <form onSubmit={handleUpdate} className="space-y-4">
 
-      {/* TITLE */}
-      <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
+      <h2 className="text-xl font-bold text-gray-800 dark:text-white">
         Update User ✏️
       </h2>
 
-      {/* GRID */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-        <input
-          name="name"
-          value={user?.name || ""}
-          onChange={handleChange}
-          placeholder="Full Name"
-          className="input"
-        />
+        {/* PERSONAL */}
+        <input name="name" value={user?.name || ""} onChange={handleChange} placeholder="Full Name" className="input" />
 
-        <input
+        <input name="email" value={user?.email || ""} onChange={handleChange} placeholder="Email" className="input" />
+
+        <select
           name="gender"
           value={user?.gender || ""}
           onChange={handleChange}
-          placeholder="Gender"
           className="input"
-        />
+        >
+          <option value="">Select Gender</option>
+          <option value="MALE">Male</option>
+          <option value="FEMALE">Female</option>
+        </select>
 
-        <input
-          type="date"
-          name="dob"
-          value={user?.dob || ""}
-          onChange={handleChange}
-          className="input"
-        />
+        <input type="date" name="dob" value={user?.dob || ""} onChange={handleChange} className="input" />
 
-        <input
-          name="occupation"
-          value={user?.occupation || ""}
-          onChange={handleChange}
-          placeholder="Occupation"
-          className="input"
-        />
+        <div className="col-span-1 sm:col-span-2">
+          <input name="address" value={user?.address || ""} onChange={handleChange} placeholder="Address" className="input" />
+        </div>
 
-        <input
-          name="accountNumber"
-          value={user?.accountNumber || ""}
-          onChange={handleChange}
-          placeholder="Account Number"
-          className="input"
-        />
+        {/* ACCOUNT */}
+        <input name="occupation" value={user?.occupation || ""} onChange={handleChange} placeholder="Occupation" className="input" />
 
-        <input
-          name="aadharNo"
-          value={user?.aadharNo || ""}
-          onChange={handleChange}
-          placeholder="Aadhar Number"
-          className="input"
-        />
+        <input name="accountNumber" value={user?.accountNumber || ""} onChange={handleChange} placeholder="Account Number" className="input" />
 
-        <input
-          name="panNo"
-          value={user?.panNo || ""}
-          onChange={handleChange}
-          placeholder="PAN Number"
-          className="input"
-        />
+        <input name="aadharNo" value={user?.aadharNo || ""} onChange={handleChange} placeholder="Aadhar Number" className="input" />
 
-        <input
-          name="address"
-          value={user?.address || ""}
-          onChange={handleChange}
-          placeholder="Address"
-          className="input"
-        />
+        <input name="panNo" value={user?.panNo || ""} onChange={handleChange} placeholder="PAN Number" className="input" />
 
-        <input
-          type="number"
-          name="rdAmount"
-          value={user?.rdAmount || ""}
-          onChange={handleChange}
-          placeholder="RD Amount"
-          className="input"
-        />
+        {/* RD */}
+        <input type="number" name="rdAmount" value={user?.rdAmount || ""} onChange={handleChange} placeholder="RD Amount" className="input" />
 
-        <input
-          type="date"
-          name="rdDate"
-          value={user?.rdDate || ""}
-          onChange={handleChange}
-          className="input"
-        />
+        <input type="date" name="rdDate" value={user?.rdDate || ""} onChange={handleChange} className="input" />
+
+        {/* NOMINEE */}
+        <input name="nomineeName" value={user?.nomineeName || ""} onChange={handleChange} placeholder="Nominee Name" className="input" />
+
+        <input name="nomineeAadharNo" value={user?.nomineeAadharNo || ""} onChange={handleChange} placeholder="Nominee Aadhar" className="input" />
+
+        <div className="col-span-1 sm:col-span-2">
+          <input name="nomineeAddress" value={user?.nomineeAddress || ""} onChange={handleChange} placeholder="Nominee Address" className="input" />
+        </div>
 
       </div>
 
-      {/* BUTTON */}
       <button
         type="submit"
         className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-semibold py-2 rounded-xl shadow hover:scale-105 transition"
