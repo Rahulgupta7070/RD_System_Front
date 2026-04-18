@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { FaTimes, FaPlus, FaTrash, FaEdit } from "react-icons/fa";
 import AddDeposit from "./AddDeposit";
 import { toast } from "react-toastify";
+import { BiShow } from "react-icons/bi";
+import { RiFileDownloadLine } from "react-icons/ri";
+import { RxCross2 } from "react-icons/rx";
 
 const UserPassbook = ({ rid, onClose }) => {
 
@@ -21,7 +24,7 @@ const UserPassbook = ({ rid, onClose }) => {
     fetchMaturity();
   }, [rid]);
 
-  // ================= FETCH =================
+  //FETCH 
   const fetchPassbook = () => {
     fetch(`http://localhost:8080/passbook/${rid}`, {
       headers: { Authorization: `Bearer ${token}` }
@@ -52,7 +55,7 @@ const UserPassbook = ({ rid, onClose }) => {
       .then(setMaturity);
   };
 
-  // ================= PDF =================
+  //  PDF 
   const viewPdf = async () => {
     try {
       const res = await fetch(`http://localhost:8080/pdf/${rid}`, {
@@ -66,7 +69,7 @@ const UserPassbook = ({ rid, onClose }) => {
 
       window.open(url, "_blank");
     } catch {
-      toast.error("PDF open failed ❌");
+      toast.error("PDF open failed ");
     }
   };
 
@@ -88,28 +91,28 @@ const UserPassbook = ({ rid, onClose }) => {
       a.click();
       a.remove();
     } catch {
-      toast.error("Download failed ❌");
+      toast.error("Download failed ");
     }
   };
 
-  // ================= PROGRESS =================
+  //  PROGRESS
   const progress = user ? (data.length / user.totalMonths) * 100 : 0;
 
-  // ================= DELETE =================
+  // DELETE
   const deleteEntry = (pid) => {
     fetch(`http://localhost:8080/pdelete/${pid}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(() => {
-        toast.success("Deleted ✅");
+        toast.success("Deleted");
         fetchPassbook();
         fetchMaturity();
       })
-      .catch(() => toast.error("Delete Failed ❌"));
+      .catch(() => toast.error("Delete Failed "));
   };
 
-  // ================= UPDATE =================
+  // UPDATE 
   const updateEntry = (e) => {
     e.preventDefault();
 
@@ -127,7 +130,7 @@ const UserPassbook = ({ rid, onClose }) => {
       body: JSON.stringify(formattedData)
     })
       .then(() => {
-        toast.success("Updated ✅");
+        toast.success("Updated ");
         setEditData(null);
         fetchPassbook();
         fetchMaturity();
@@ -210,23 +213,29 @@ const UserPassbook = ({ rid, onClose }) => {
 
               <button
                 onClick={() => setShowForm(true)}
-                className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg"
+                className="flex items-center gap-2 bg-green-500 hover:bg-green-600 hover:shadow-md 
+  hover:scale-105 text-white px-4 py-2 rounded-lg"
               >
                 <FaPlus /> Add Deposit
               </button>
 
               <button
                 onClick={viewPdf}
-                className="bg-purple-500 text-white px-4 py-2 rounded-lg"
+                className="bg-purple-500 flex items-center gap-2 hover:bg-purple-600 hover:shadow-md 
+  hover:scale-105 text-white px-4 py-2 rounded-lg"
               >
-                👁 View
+                <span><BiShow size={20} /></span>
+                View
+                
               </button>
 
               <button
                 onClick={downloadPdf}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                className="bg-blue-500 flex items-center gap-2 hover:bg-blue-600 hover:shadow-md 
+  hover:scale-105 text-white px-4 py-2 rounded-lg"
               >
-                ⬇ Download
+                <span><RiFileDownloadLine size={20} /></span>
+                 Download
               </button>
 
             </div>
@@ -280,11 +289,14 @@ const UserPassbook = ({ rid, onClose }) => {
             <div className="relative w-[380px] p-5 rounded-2xl shadow-2xl bg-white dark:bg-gray-900">
 
               <button
-                onClick={() => setShowForm(false)}
-                className="absolute top-3 right-3 bg-gray-200 dark:bg-gray-700 hover:bg-red-500 p-2 rounded-full"
-              >
-                ✖
-              </button>
+                     onClick={() => setShowForm(false)}
+                     className="sticky top-0 float-right m-3 text-red-500 text-xl z-10 bg-red-100 dark:bg-red-900 
+               text-red-600 dark:text-red-300
+               hover:bg-red-200 dark:hover:bg-red-800
+               hover:scale-110 active:scale-95"
+                   >
+                     <RxCross2 size={26} />
+                   </button>
 
               <AddDeposit
                 rid={rid}
@@ -308,18 +320,18 @@ const UserPassbook = ({ rid, onClose }) => {
               text-gray-800 dark:text-white
               border border-gray-300 dark:border-gray-700">
 
-              <button
-                onClick={() => setEditData(null)}
-                className="absolute top-3 right-3 
-                bg-gray-200 dark:bg-gray-700 
-                hover:bg-red-500 hover:text-white
-                p-2 rounded-full"
-              >
-                ✖
-              </button>
+               <button
+                     onClick={() => setEditData(null)}
+                     className="sticky top-0 float-right m-3 text-red-500 text-xl z-10 bg-red-100 dark:bg-red-900 
+               text-red-600 dark:text-red-300
+               hover:bg-red-200 dark:hover:bg-red-800
+               hover:scale-110 active:scale-95"
+                   >
+                     <RxCross2 size={26} />
+                   </button>
 
               <h2 className="text-xl font-bold mb-4 text-center">
-                ✏ Update Deposit
+                Update Deposit
               </h2>
 
               <form onSubmit={updateEntry} className="space-y-4">

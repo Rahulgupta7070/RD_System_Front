@@ -64,14 +64,14 @@ const UpdateUserForm = ({ userData, onSuccess }) => {
           throw new Error("Update failed");
         }
 
-        toast.success("User Updated Successfully ✏️");
+        toast.success("User Updated Successfully ");
         onSuccess();
       })
       .catch((err) => {
         if (err.message === "Forbidden") {
-          toast.error("Access Denied (403) ❌");
+          toast.error("Access Denied (403) ");
         } else {
-          toast.error("Update failed ❌");
+          toast.error("Update failed ");
         }
       });
   };
@@ -80,7 +80,7 @@ const UpdateUserForm = ({ userData, onSuccess }) => {
     <form onSubmit={handleUpdate} className="space-y-4">
 
       <h2 className="text-xl font-bold text-gray-800 dark:text-white">
-        Update User ✏️
+        Update User 
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -116,7 +116,7 @@ const UpdateUserForm = ({ userData, onSuccess }) => {
 
         <input type="date" name="rdDate" value={user.rdDate} onChange={handleChange} className="input" />
 
-        {/* 👉 NEW FIELD (IMPORTANT) */}
+       
         <select
           name="totalMonths"
           value={user.totalMonths}

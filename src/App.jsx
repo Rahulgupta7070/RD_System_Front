@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route, Outlet, Navigate, useLocation } from "react-router-dom";
+
+import { BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
@@ -10,20 +11,20 @@ import Dashboard from "./components/Dashboard";
 import LoginPage from "./components/LoginPage";
 import CreateAdmin from "./components/CreateAdmin";
 import AdminList from "./components/AdminList";
+import AuditPage from "./components/AuditPage"; // 🔥 ADD
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 
-// ✅ PROTECTED ROUTE
+// PROTECTED ROUTE
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
-
   return token ? children : <Navigate to="/login" />;
 };
 
 
-// ✅ ADMIN PROTECTION
+// ADMIN PROTECTION
 const AdminRoute = ({ children }) => {
   const role = localStorage.getItem("role");
 
@@ -35,7 +36,7 @@ const AdminRoute = ({ children }) => {
 };
 
 
-// ✅ LAYOUT
+// LAYOUT
 const Layout = () => {
   return (
     <div className="flex">
@@ -59,10 +60,10 @@ function App() {
 
       <Routes>
 
-        {/* ❌ PUBLIC */}
+        {/* PUBLIC */}
         <Route path="/login" element={<LoginPage />} />
 
-        {/* ✅ PROTECTED */}
+        {/* PROTECTED */}
         <Route
           element={
             <ProtectedRoute>
@@ -75,7 +76,7 @@ function App() {
           <Route path="/deposit" element={<Deposit />} />
           <Route path="/interest-cal" element={<InterestCalculator />} />
 
-          {/* 👑 ADMIN ROUTES */}
+          {/* ADMIN ROUTES */}
           <Route
             path="/create-admin"
             element={
@@ -90,6 +91,16 @@ function App() {
             element={
               <AdminRoute>
                 <AdminList />
+              </AdminRoute>
+            }
+          />
+
+          {/* 🔥 AUDIT ROUTE (ONLY SUPER ADMIN) */}
+          <Route
+            path="/audit"
+            element={
+              <AdminRoute>
+                <AuditPage />
               </AdminRoute>
             }
           />

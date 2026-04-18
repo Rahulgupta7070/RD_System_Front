@@ -16,7 +16,7 @@ function InterestCalculator() {
   const calculate = () => {
 
     if (!amount || !months || !rate) {
-      toast.warning("Fill all fields ⚠️");
+      toast.warning("Fill all fields ");
       return;
     }
 

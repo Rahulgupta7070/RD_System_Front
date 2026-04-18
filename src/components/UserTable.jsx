@@ -7,6 +7,10 @@ import { FaRegEdit } from "react-icons/fa";
 import { BsBank } from "react-icons/bs";
 import UserFilter from "./UserFilter";
 import { toast } from "react-toastify";
+import { FaUsersLine } from "react-icons/fa6";
+import { IoIosPersonAdd } from "react-icons/io";
+import { FiSearch } from "react-icons/fi";
+import { RxCross2 } from "react-icons/rx";
 
 const UserTable = () => {
 
@@ -24,11 +28,11 @@ const UserTable = () => {
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState({});
 
-  // ================= FETCH USERS =================
+  //FETCH USERS 
   const fetchUsers = () => {
 
     if (!token) {
-      toast.error("Session expired ❌");
+      toast.error("Session expired ");
       return;
     }
 
@@ -62,14 +66,14 @@ const UserTable = () => {
         setUsers(data.content || []);
         setTotalPages(data.totalPages || 1);
       })
-      .catch(() => toast.error("Failed to load users ❌"));
+      .catch(() => toast.error("Failed to load users "));
   };
 
   useEffect(() => {
     fetchUsers();
   }, [page, search, filters]);
 
-  // ================= DELETE =================
+  // DELETE 
 const deleteUser = (id) => {
 
   toast(
@@ -132,37 +136,61 @@ const deleteUser = (id) => {
 
       {/* HEADER */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
-          Users 👥
-        </h1>
+       <h1 className="text-3xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+  Users 
+  <span>
+   <FaUsersLine className="text-blue-500" size={28} />
+  </span>
+</h1>
 
-        <button
-          onClick={() => setShowForm(true)}
-          className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-5 py-2 rounded-xl shadow hover:scale-105 transition"
-        >
-          + Add User
-        </button>
+       <button
+  onClick={() => setShowForm(true)}
+  className="flex items-center gap-2 
+  bg-gradient-to-r from-green-500 to-emerald-600 
+  hover:from-green-600 hover:to-emerald-700
+  text-white px-5 py-2 rounded-xl shadow-md 
+  hover:shadow-lg hover:scale-105 active:scale-95
+  transition-all duration-300"
+>
+ <IoIosPersonAdd className="group-hover:rotate-12 transition" />
+  <span className="font-medium">Add User</span>
+</button>
       </div>
+<div className="flex justify-between items-center mb-6">
 
-      {/* SEARCH + FILTER */}
-      <div className="flex justify-between items-center mb-6">
+  {/* SEARCH INPUT */}
+  <div className="relative w-80">
+    
+    {/* Icon */}
+    <FiSearch 
+      className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400" 
+      size={18} 
+    />
 
-        <input
-          type="text"
-          placeholder="🔍 Search user..."
-          value={search}
-          onChange={(e) => {
-            setPage(0);
-            setSearch(e.target.value);
-          }}
-          className="bg-white dark:bg-gray-800 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-700 px-4 py-2 rounded-xl w-80 focus:ring-2 focus:ring-blue-500 outline-none shadow"
-        />
+    {/* Input */}
+    <input
+      type="text"
+      placeholder="Search user..."
+      value={search}
+      onChange={(e) => {
+        setPage(0);
+        setSearch(e.target.value);
+      }}
+      className="w-full pl-10 pr-4 py-2 rounded-xl shadow
+      bg-white dark:bg-gray-800 
+      text-gray-800 dark:text-white 
+      border border-gray-300 dark:border-gray-700
+      focus:ring-2 focus:ring-blue-500 outline-none"
+    />
+  </div>
 
-        <UserFilter onApply={(f) => {
-          setFilters(f);
-          setPage(0);
-        }} />
-      </div>
+  {/* FILTER */}
+  <UserFilter onApply={(f) => {
+    setFilters(f);
+    setPage(0);
+  }} />
+
+</div>
 
       {/* TABLE */}
       <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-lg overflow-hidden">
@@ -264,7 +292,7 @@ const deleteUser = (id) => {
         </button>
       </div>
 
-      {/* ================= ADD USER MODAL ================= */}
+      {/*ADD USER MODAL*/}
   
 
 {showForm && (
@@ -276,9 +304,12 @@ const deleteUser = (id) => {
       {/* CLOSE BUTTON */}
       <button
         onClick={() => setShowForm(false)}
-        className="sticky top-0 float-right m-3 text-red-500 text-xl z-10"
+        className="sticky top-0 float-right m-3 text-red-500 text-xl z-10 bg-red-100 dark:bg-red-900 
+  text-red-600 dark:text-red-300
+  hover:bg-red-200 dark:hover:bg-red-800
+  hover:scale-110 active:scale-95"
       >
-        ✖
+        <RxCross2 size={26} />
       </button>
 
       {/* FORM CONTENT */}
@@ -294,7 +325,7 @@ const deleteUser = (id) => {
     </div>
   </div>
 )}
-      {/* ================= EDIT USER MODAL ================= */}
+      {/*EDIT USER MODAL */}
       {showEditForm && (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[9999]">
 
@@ -304,7 +335,7 @@ const deleteUser = (id) => {
               onClick={() => setShowEditForm(false)}
               className="absolute top-3 right-3 text-red-500 text-xl"
             >
-              ✖
+             <RxCross2  size={26}/>
             </button>
 
             <UpdateUserForm
@@ -320,7 +351,7 @@ const deleteUser = (id) => {
         </div>
       )}
 
-      {/* ================= PASSBOOK ================= */}
+      {/* PASSBOOK  */}
       {showPassbook && (
         <UserPassbook
           rid={selectedUser?.rid}

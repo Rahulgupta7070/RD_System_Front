@@ -12,10 +12,10 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    e.preventDefault(); // 🔥 important
+    e.preventDefault(); 
 
     if (!email || !password) {
-      toast.warning("Please enter email and password ⚠️");
+      toast.warning("Please enter email and password ");
       return;
     }
 
@@ -66,10 +66,10 @@ const LoginPage = () => {
       p-8 rounded-2xl shadow-2xl w-80 border border-gray-200 dark:border-gray-700">
 
         <h2 className="text-2xl font-bold text-center mb-6 text-gray-800 dark:text-white">
-          Admin Login 🔐
+          Admin Login 
         </h2>
 
-        {/* 🔥 FORM START */}
+        {/* FORM START */}
         <form autoComplete="off" onSubmit={handleLogin}>
 
           {/* EMAIL */}
@@ -77,7 +77,7 @@ const LoginPage = () => {
             <FiMail className="absolute left-3 top-3 text-gray-500" />
             <input
               type="email"
-              name="random_login_email" // 🔥 autofill hack
+              name="random_login_email" 
               autoComplete="off"
               placeholder="Enter Email"
               value={email}
@@ -95,7 +95,7 @@ const LoginPage = () => {
             <FiLock className="absolute left-3 top-3 text-gray-500" />
             <input
               type="password"
-              name="random_login_password" // 🔥 autofill hack
+              name="random_login_password" // 
               autoComplete="new-password"
               placeholder="Enter Password"
               value={password}
@@ -119,7 +119,7 @@ const LoginPage = () => {
           </button>
 
         </form>
-        {/* 🔥 FORM END */}
+        {/*FORM END */}
 
       </div>
     </div>

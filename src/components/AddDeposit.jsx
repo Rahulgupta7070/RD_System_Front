@@ -30,17 +30,17 @@ const AddDeposit = ({ rid, onSuccess }) => {
     e.preventDefault();
 
     if (!token) {
-      toast.error("Session expired ❌");
+      toast.error("Session expired ");
       return;
     }
 
     if (!data.rdDate || !data.rdAmount) {
-      toast.warning("Fill all fields ⚠️");
+      toast.warning("Fill all fields ");
       return;
     }
 
     if (data.rdAmount <= 0) {
-      toast.error("Amount must be > 0 ❌");
+      toast.error("Amount must be > 0 ");
       return;
     }
 
@@ -65,7 +65,7 @@ const AddDeposit = ({ rid, onSuccess }) => {
 
       if (!res.ok) throw new Error();
 
-      toast.success("Deposit Added 🎉");
+      toast.success("Deposit Added ");
 
       setData({
         rid: rid,
@@ -76,7 +76,7 @@ const AddDeposit = ({ rid, onSuccess }) => {
       if (onSuccess) onSuccess();
 
     } catch {
-      toast.error("Error ❌");
+      toast.error("Error ");
     } finally {
       setLoading(false);
     }
@@ -88,7 +88,7 @@ const AddDeposit = ({ rid, onSuccess }) => {
       {/* TITLE */}
       <div className="text-center">
         <h2 className="text-lg font-bold text-gray-800 dark:text-white">
-          Add Deposit 💰
+          Add Deposit
         </h2>
         <p className="text-xs text-gray-500 dark:text-gray-400">
           Enter monthly deposit details
@@ -136,7 +136,7 @@ const AddDeposit = ({ rid, onSuccess }) => {
 
       {/* QUICK BUTTONS */}
       <div className="flex gap-2 justify-center">
-        {[500, 1000, 2000].map((amt) => (
+        {[5000, 1000, 2000].map((amt) => (
           <button
             type="button"
             key={amt}

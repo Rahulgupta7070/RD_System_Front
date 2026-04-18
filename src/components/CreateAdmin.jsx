@@ -7,28 +7,28 @@ const CreateAdmin = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // 🔥 ROLE CHECK
+  //ROLE CHECK
   useEffect(() => {
     const role = localStorage.getItem("role");
 
     if (role !== "ROLE_SUPER_ADMIN") {
-      toast.error("Access Denied ❌");
+      toast.error("Access Denied ");
       window.location.href = "/";
     }
   }, []);
 
   const handleCreate = async (e) => {
-    e.preventDefault(); // 🔥 important (form submit control)
+    e.preventDefault(); 
 
     if (!email || !password) {
-      toast.warning("Fill all fields ⚠️");
+      toast.warning("Fill all fields ");
       return;
     }
 
     const token = localStorage.getItem("token");
 
     if (!token) {
-      toast.error("Login required ❌");
+      toast.error("Login required ");
       return;
     }
 
@@ -56,15 +56,15 @@ const CreateAdmin = () => {
 
       toast.success("Admin Created Successfully 🎉");
 
-      // 🔥 reset fields
+      //reset fields
       setEmail("");
       setPassword("");
 
     } catch (err) {
       if (err.message === "Forbidden") {
-        toast.error("Only Super Admin allowed ❌");
+        toast.error("Only Super Admin allowed ");
       } else {
-        toast.error("Something went wrong ❌");
+        toast.error("Something went wrong ");
       }
     } finally {
       setLoading(false);
@@ -77,10 +77,10 @@ const CreateAdmin = () => {
       <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl w-[360px] border dark:border-gray-700">
 
         <h2 className="text-2xl font-bold text-center mb-6 text-gray-800 dark:text-white">
-          Create Admin 👑
+          Create Admin
         </h2>
 
-        {/* 🔥 FORM START */}
+        {/*  FORM START */}
         <form autoComplete="off" onSubmit={handleCreate}>
 
           {/* EMAIL */}
@@ -119,7 +119,7 @@ const CreateAdmin = () => {
           </button>
 
         </form>
-        {/* 🔥 FORM END */}
+        {/* FORM END */}
 
       </div>
 

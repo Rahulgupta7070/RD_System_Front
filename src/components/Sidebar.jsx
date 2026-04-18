@@ -1,6 +1,7 @@
+
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { FaTachometerAlt, FaUsers, FaWallet } from "react-icons/fa";
+import { FaTachometerAlt, FaUsers, FaWallet, FaHistory } from "react-icons/fa";
 import { MdCalculate, MdAdminPanelSettings } from "react-icons/md";
 import { HiMenuAlt3 } from "react-icons/hi";
 
@@ -8,10 +9,8 @@ const Sidebar = () => {
   const { pathname } = useLocation();
   const [collapsed, setCollapsed] = useState(false);
 
-  // 🔥 ROLE GET
   const role = localStorage.getItem("role");
 
-  // ✅ BASE MENU
   const menu = [
     { name: "Dashboard", path: "/", icon: <FaTachometerAlt /> },
     { name: "Users", path: "/users", icon: <FaUsers /> },
@@ -19,22 +18,26 @@ const Sidebar = () => {
     { name: "Calculator", path: "/interest-cal", icon: <MdCalculate /> },
   ];
 
-  // 👑 ONLY SUPER ADMIN
-
-if (role === "ROLE_SUPER_ADMIN") {
-  menu.push(
-    {
-      name: "Create Admin",
-      path: "/create-admin",
-      icon: <MdAdminPanelSettings />
-    },
-    {
-      name: "Admin List",
-      path: "/admin-list",
-      icon: <FaUsers />
-    }
-  );
-}
+  // 🔥 ONLY SUPER ADMIN
+  if (role === "ROLE_SUPER_ADMIN") {
+    menu.push(
+      {
+        name: "Create Admin",
+        path: "/create-admin",
+        icon: <MdAdminPanelSettings />
+      },
+      {
+        name: "Admin List",
+        path: "/admin-list",
+        icon: <FaUsers />
+      },
+      {
+        name: "Audit Logs",        // 🔥 ADD
+        path: "/audit",
+        icon: <FaHistory />
+      }
+    );
+  }
 
   return (
     <div

@@ -163,7 +163,7 @@ const Dashboard = () => {
 export default Dashboard;
 
 
-// 💎 PREMIUM CARD
+// PREMIUM CARD
 const Card = ({ title, value, icon, color }) => {
   return (
     <div className="flex items-center justify-between p-5 bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-2xl hover:scale-105 transition-all duration-300">

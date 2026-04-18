@@ -31,7 +31,7 @@ const UserFilter = ({ onApply }) => {
   return (
     <div className="relative">
 
-      {/* 🔥 FILTER BUTTON */}
+      {/* FILTER BUTTON */}
       <button
         onClick={() => setShow(!show)}
         className="flex items-center gap-2 bg-white dark:bg-gray-800 
@@ -42,7 +42,7 @@ const UserFilter = ({ onApply }) => {
         <span>Filter</span>
       </button>
 
-      {/* 🔥 FILTER PANEL */}
+      {/* FILTER PANEL */}
       {show && (
         <div className="absolute right-0 mt-2 w-[320px] z-[9999]
           bg-white dark:bg-gray-800 

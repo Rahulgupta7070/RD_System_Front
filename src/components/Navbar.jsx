@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import { MdLightMode,MdDarkMode } from "react-icons/md";
+import { IoMdLogOut } from "react-icons/io";
 
 const Navbar = () => {
 
@@ -20,7 +22,7 @@ const Navbar = () => {
     }
   }, [darkMode]);
 
-  // 🔥 FIXED LOGOUT
+  // FIXED LOGOUT
   const handleLogout = async () => {
 
     const token = localStorage.getItem("token");
@@ -38,11 +40,11 @@ const Navbar = () => {
       console.log("Logout API failed");
     }
 
-    // 🧹 clear storage
+    // clear storage
     localStorage.removeItem("token");
     localStorage.removeItem("role");
 
-    toast.success("Logged out successfully 👋");
+    toast.success("Logged out successfully ");
 
     navigate("/login", { replace: true });
   };
@@ -62,23 +64,33 @@ const Navbar = () => {
 
       <div className="flex items-center gap-3">
 
-        {/* 🌙 THEME TOGGLE */}
-        <button
-          onClick={() => setDarkMode(!darkMode)}
-          className="bg-gray-200 dark:bg-gray-700 
-          text-black dark:text-white px-3 py-1 rounded-lg shadow hover:scale-105 transition"
-        >
-          {darkMode ? "☀️" : "🌙"}
-        </button>
+     
 
-        {/* LOGOUT */}
-        <button
-          onClick={handleLogout}
-          className="bg-red-500 hover:bg-red-600 
-          text-white px-4 py-1 rounded-lg shadow hover:scale-105 transition"
-        >
-          Logout
-        </button>
+{/* THEME TOGGLE */}
+<button
+  onClick={() => setDarkMode(!darkMode)}
+  className="bg-gray-200 dark:bg-gray-700 
+  text-black dark:text-white p-2 rounded-lg shadow hover:scale-105 transition flex items-center justify-center"
+>
+  {darkMode ? <MdLightMode size={20} /> : <MdDarkMode size={20} />}
+</button>
+
+
+
+{/* LOGOUT */}
+<button
+  onClick={handleLogout}
+  className="group bg-red-500 hover:bg-red-600 
+  text-white px-4 py-1 rounded-lg shadow 
+  flex items-center gap-2 transition-all duration-300"
+>
+  Logout
+
+  {/* Icon (hidden by default) */}
+  <span className="opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300">
+    <IoMdLogOut size={18} />
+  </span>
+</button>
 
       </div>
     </div>

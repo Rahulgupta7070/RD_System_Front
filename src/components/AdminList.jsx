@@ -11,7 +11,7 @@ const AdminList = () => {
 
   const token = localStorage.getItem("token");
 
-  // 🔥 FETCH ADMINS
+  //FETCH ADMINS
   const fetchAdmins = async () => {
     try {
       setLoading(true);
@@ -25,7 +25,7 @@ const AdminList = () => {
       const data = await res.json();
       setAdmins(data);
     } catch {
-      toast.error("Failed to load admins ❌");
+      toast.error("Failed to load admins ");
     } finally {
       setLoading(false);
     }
@@ -35,7 +35,7 @@ const AdminList = () => {
     fetchAdmins();
   }, []);
 
-  // ❌ DELETE ADMIN
+  // DELETE ADMIN
   const handleDelete = (id) => {
     toast(
       ({ closeToast }) => (
@@ -73,11 +73,11 @@ const AdminList = () => {
 
                   if (!res.ok) throw new Error(msg);
 
-                  toast.success("Admin deleted successfully 🗑️");
+                  toast.success("Admin deleted successfully");
 
                   fetchAdmins();
                 } catch (err) {
-                  toast.error(err.message || "Delete failed ❌");
+                  toast.error(err.message || "Delete failed ");
                 } finally {
                   setDeleteLoading(false);
                 }
@@ -101,7 +101,7 @@ const AdminList = () => {
     <div className="p-6 min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-black">
       
       <h2 className="text-3xl font-bold mb-6 text-gray-800 dark:text-white">
-        Admin List 👑
+        Admin List
       </h2>
 
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">

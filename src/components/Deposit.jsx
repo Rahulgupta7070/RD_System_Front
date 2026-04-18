@@ -17,11 +17,11 @@ const Deposit = () => {
 
   const [loading, setLoading] = useState(false);
 
-  // 🔍 SEARCH USERS
+  // SEARCH USERS
   useEffect(() => {
 
     if (!token) {
-      toast.error("Session expired ❌");
+      toast.error("Session expired");
       return;
     }
 
@@ -58,7 +58,7 @@ const Deposit = () => {
     e.preventDefault();
 
     if (!data.rid || !data.rdAmount || !data.rdDate) {
-      toast.warning("Fill all fields ⚠️");
+      toast.warning("Fill all fields ");
       return;
     }
 
@@ -89,7 +89,7 @@ const Deposit = () => {
       setSearch("");
 
     } catch {
-      toast.error("Error ❌");
+      toast.error("Error ");
     } finally {
       setLoading(false);
     }
@@ -106,7 +106,7 @@ const Deposit = () => {
 
         <h1 className="text-2xl font-bold mb-5 text-center 
         text-gray-800 dark:text-white">
-          Deposit 💰
+          Deposit 
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">

@@ -17,7 +17,7 @@ const AddUserForm = ({ onSuccess }) => {
     panNo: "",
     rdAmount: "",
     rdDate: "",
-    totalMonths: "", // ✅ NEW FIELD
+    totalMonths: "", 
     nomineeName: "",
     nomineeAddress: "",
     nomineeAadharNo: ""
@@ -40,7 +40,7 @@ const AddUserForm = ({ onSuccess }) => {
     if (!user.accountNumber) err.accountNumber = "Required";
     if (!user.rdAmount) err.rdAmount = "Required";
     if (!user.rdDate) err.rdDate = "Required";
-    if (!user.totalMonths) err.totalMonths = "Required"; // ✅ ADD
+    if (!user.totalMonths) err.totalMonths = "Required"; 
 
     setErrors(err);
     return Object.keys(err).length === 0;
@@ -79,7 +79,7 @@ const AddUserForm = ({ onSuccess }) => {
         panNo: "",
         rdAmount: "",
         rdDate: "",
-        totalMonths: "", // ✅ RESET
+        totalMonths: "", 
         nomineeName: "",
         nomineeAddress: "",
         nomineeAadharNo: ""
@@ -88,7 +88,7 @@ const AddUserForm = ({ onSuccess }) => {
       onSuccess();
 
     } catch {
-      toast.error("Error ❌");
+      toast.error("Error ");
     } finally {
       setLoading(false);
     }
@@ -132,7 +132,7 @@ const AddUserForm = ({ onSuccess }) => {
         <Input type="number" label="RD Amount" name="rdAmount" value={user.rdAmount} onChange={handleChange} error={errors.rdAmount}/>
         <Input type="date" label="RD Start Date" name="rdDate" value={user.rdDate} onChange={handleChange} error={errors.rdDate}/>
 
-        {/* 🔥 PLAN SELECT */}
+        {/* PLAN SELECT */}
         <div className="flex flex-col">
           <label className="text-xs mb-1 text-gray-600 dark:text-gray-300">RD Plan</label>
           <select
